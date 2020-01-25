@@ -10,12 +10,14 @@
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 
+#include "./CO2Meter/CO2Meter.h"
+#include "./BME280/BME280.h"
+
 class WeatherServer{
     public:
         const char* ssid = "dlink";
         const char* password = "768513783";
-
-        // WeatherServer(CO2Meter co2meter, BME280 bme280);
+        WeatherServer();
         void configure();
 
     private:

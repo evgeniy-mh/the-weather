@@ -2,6 +2,14 @@
 
 AsyncWebServer server(80);
 
+CO2Meter co2meter;
+BME280 bme280;
+
+WeatherServer::WeatherServer(){
+  co2meter.initCO2Meter();
+  bme280.initBME280();
+}
+
 void WeatherServer::configure(){
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
@@ -32,13 +40,15 @@ void WeatherServer::defineRESTRoutes(){
         request->send(200, "text/plain", "Hello, world");
     });
 
-    server.on("/test", HTTP_GET, [](AsyncWebServerRequest *request){
-        const int capacity=JSON_OBJECT_SIZE(3);
+    server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request){
+        const int capacity=JSON_OBJECT_SIZE(5);
         StaticJsonDocument<capacity>doc;
 
-        doc["value"]=42;
-        doc["lat"]=48.748010;
-        doc["lon"]=2.293491;
+        doc["co2"]=co2meter.getCO2();
+        doc["temp"]=bme280.readTemperature();
+        doc["humid"]=bme280.readHumidity();
+        doc["pressure"]=bme280.readPressure();
+        doc["altitude"]=bme280.readAltitude();
 
         String output="";
         serializeJson(doc, output);
