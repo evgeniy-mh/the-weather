@@ -16,3 +16,8 @@ void CO2Meter::initCO2Meter(){
 int CO2Meter::getCO2(){
     return MHZ19_Obj.getCO2();
 }
+
+void CO2Meter::printPPMValueToSerial(){
+    Serial.print("PPM: "); Serial.print(getCO2());  
+    Serial.println();  
+}

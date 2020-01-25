@@ -13,6 +13,8 @@ class CO2Meter{
     public:
         void initCO2Meter();
         int getCO2();
+
+        void printPPMValueToSerial();
 };
 
 #endif
