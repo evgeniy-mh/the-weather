@@ -7,10 +7,15 @@
 #endif
 #include <ESPAsyncWebServer.h>
 
+#include "AsyncJson.h"
+#include "ArduinoJson.h"
+
 class WeatherServer{
     public:
         const char* ssid = "dlink";
         const char* password = "768513783";
+
+        // WeatherServer(CO2Meter co2meter, BME280 bme280);
         void configure();
 
     private:

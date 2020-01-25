@@ -22,11 +22,27 @@ void WeatherServer::configure(){
     Serial.print("IP Address: ");
     Serial.println(WiFi.localIP());
 
-
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        request->send(200, "text/plain", "Hello, world");
-    });
+    defineRESTRoutes();    
 
     server.begin();
 }
 
+void WeatherServer::defineRESTRoutes(){
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(200, "text/plain", "Hello, world");
+    });
+
+    server.on("/test", HTTP_GET, [](AsyncWebServerRequest *request){
+        const int capacity=JSON_OBJECT_SIZE(3);
+        StaticJsonDocument<capacity>doc;
+
+        doc["value"]=42;
+        doc["lat"]=48.748010;
+        doc["lon"]=2.293491;
+
+        String output="";
+        serializeJson(doc, output);
+
+        request->send(200, "application/json", output);
+    });
+}
