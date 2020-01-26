@@ -55,4 +55,27 @@ void WeatherServer::defineRESTRoutes(){
 
         request->send(200, "application/json", output);
     });
+
+    server.on("/cpuinfo", HTTP_GET, [](AsyncWebServerRequest *request){
+        const int capacity=JSON_OBJECT_SIZE(13);
+        StaticJsonDocument<capacity>doc;
+
+        doc["FreeHeap"]=ESP.getFreeHeap();
+        doc["HeapFragmentation"]=ESP.getHeapFragmentation();
+        doc["MaxFreeBlockSize"]=ESP.getMaxFreeBlockSize();
+        doc["ChipId"]=ESP.getChipId();
+        doc["CoreVersion"]=ESP.getCoreVersion();
+        doc["SdkVersion"]=ESP.getSdkVersion();
+        doc["CpuFreqMHz"]=ESP.getCpuFreqMHz();
+        doc["SketchSize"]=ESP.getSketchSize();
+        doc["FreeSketchSpace"]=ESP.getFreeSketchSpace();
+        doc["FlashChipId"]=ESP.getFlashChipId();
+        doc["FlashChipSize"]=ESP.getFlashChipSize();
+        doc["FlashChipRealSize"]=ESP.getFlashChipRealSize();
+        doc["FlashChipSpeed"]=ESP.getFlashChipSpeed();
+        
+        String output="";
+        serializeJson(doc, output);
+        request->send(200, "application/json", output);
+    });
 }
