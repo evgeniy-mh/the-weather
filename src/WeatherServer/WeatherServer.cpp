@@ -59,9 +59,8 @@ String getContentType(String filename) { // convert the file extension to the MI
 }
 
 void WeatherServer::defineRESTRoutes(){
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-        request->send(200, "text/plain", "Hello, world");
-    });
+
+    server.serveStatic("/", SPIFFS, "/dist");
 
     server.on("/files", HTTP_GET, [](AsyncWebServerRequest *request){
         String files = "";
