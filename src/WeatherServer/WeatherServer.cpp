@@ -96,7 +96,7 @@ void WeatherServer::defineRESTRoutes(){
         doc["temp"]=bme280.readTemperature();
         doc["humid"]=bme280.readHumidity();
         doc["pressure"]=bme280.readPressure();
-        doc["altitude"]=bme280.readAltitude();
+        doc["alt"]=bme280.readAltitude();
 
         String output="";
         serializeJson(doc, output);

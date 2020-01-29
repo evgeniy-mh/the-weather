@@ -1,4 +1,5 @@
 import { SensorInfoAction } from './Actions';
+import { SensorInfo } from './Models';
 
 function createEmptySensorsInfoState(): SensorInfo {
     return {}

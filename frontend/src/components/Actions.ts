@@ -1,3 +1,5 @@
+import { SensorInfo } from "./Models";
+
 export type SENSOR_INFO_ACTION =
     'FETCH_SENSOR_INFO_STARTED'
     | 'FETCH_SENSOR_INFO_SUCCESS'
