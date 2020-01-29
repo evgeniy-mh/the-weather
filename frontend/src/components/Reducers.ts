@@ -20,7 +20,7 @@ function sensorsInfoReducer(
     }
 }
 
-interface AppState {
+export  interface AppState {
     sensors: SensorInfo;
 }
 
