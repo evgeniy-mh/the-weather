@@ -1,7 +1,6 @@
 import * as React from "react";
 import { connect } from 'react-redux'
-import { SensorsInfoState } from "./Reducers";
-import { fetchSensorInfo } from './Actions'
+import { fetchSensorInfo } from "./SensorsService";
 
 interface State {
     co2: number;

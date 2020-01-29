@@ -1,44 +1,34 @@
-import { ReduxAction } from "./Models";
-import { ThunkAction, ThunkDispatch } from 'redux-thunk'
-import { FetchStatus } from "./Reducers";
+export type SENSOR_INFO_ACTION =
+    'FETCH_SENSOR_INFO_STARTED'
+    | 'FETCH_SENSOR_INFO_SUCCESS'
+    | 'FETCH_SENSOR_INFO_FAIL';
 
-export const FETCH_SENSOR_INFO_STARTED = 'FETCH_SENSOR_INFO_STARTED';
-export const FETCH_SENSOR_INFO_SUCCESS = 'FETCH_SENSOR_INFO_SUCCESS';
-export const FETCH_SENSOR_INFO_FAIL = 'FETCH_SENSOR_INFO_FAIL';
-
-export function fetchSensorInfoStarted(): Partial<ReduxAction> {
-    return {
-        type: FETCH_SENSOR_INFO_STARTED
-    }
+export interface SensorInfoAction {
+    type: SENSOR_INFO_ACTION,
+    payload: Partial<SensorInfo>,
 }
 
-export function fetchSensorInfoSuccess(payload: any): ReduxAction {
-    const fetchStatus: FetchStatus='success';
+export function fetchSensorInfoStart(): SensorInfoAction {
     return {
-        type: FETCH_SENSOR_INFO_SUCCESS,
-        payload:{
-            ...payload,
-            fetchStatus
+        type: 'FETCH_SENSOR_INFO_STARTED',
+        payload: {
+            fetchStatus: 'loading'
         }
     }
 }
 
-// export function fetchSensorInfo(payload: any): ReduxAction {
-//     return {
-//         type: FETCH_SENSOR_INFO,
-//         payload
-//     }
-// }
+export function fetchSensorInfoFail(): SensorInfoAction {
+    return {
+        type: 'FETCH_SENSOR_INFO_FAIL',
+        payload: {
+            fetchStatus: 'fail'
+        }
+    }
+}
 
-export function fetchSensorInfo() {
-    return (dispatch: any) => {
-        dispatch(fetchSensorInfoStarted());
-
-
-        dispatch(fetchSensorInfoSuccess({
-            co2: 555,
-            temperature: 777,
-            humidity: 888,
-        }))
-    };
-};
+export function fetchSensorInfoSuccess(payload: Partial<SensorInfo>): SensorInfoAction {
+    return {
+        type: 'FETCH_SENSOR_INFO_SUCCESS',
+        payload: {...payload, fetchStatus: 'success'}
+    }
+}
