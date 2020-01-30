@@ -19,7 +19,7 @@ class WeatherServer{
         const char* password = "768513783";
         WeatherServer();
         void configure();
-        void onWSEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len);
+        void sendUpdatesToConnectedWebSocketClients();
 
     private:
         void defineRESTRoutes();

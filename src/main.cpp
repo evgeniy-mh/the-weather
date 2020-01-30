@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "./WeatherServer/WeatherServer.h"
 
+WeatherServer weatherServer;
 SPIFFSConfig cfg;
 
 void setup() {
@@ -17,9 +18,17 @@ void setup() {
   } else {
     Serial.println("Unable to mount SPIFFS");
   }
-
-  WeatherServer weatherServer;
+  
   weatherServer.configure();
 }
+
+// 1000 = 1 sec
+int period = 5000;
+unsigned long time_now = 0;
+
 void loop() {
+  if(millis() - time_now > period){
+        time_now = millis();        
+        weatherServer.sendUpdatesToConnectedWebSocketClients();
+    }
 }

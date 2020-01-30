@@ -3,13 +3,15 @@
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
+int WSClientCount=0;
+bool serverIsReady=false;
+
 
 CO2Meter co2meter;
 BME280 bme280;
 
 WeatherServer::WeatherServer(){
-  co2meter.initCO2Meter();
-  bme280.initBME280();
+  
 }
 
 void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
@@ -18,9 +20,11 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
     Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
     client->printf("Hello Client %u :)", client->id());
     client->ping();
+    WSClientCount++;
   } else if(type == WS_EVT_DISCONNECT){
     //client disconnected
     Serial.printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
+    WSClientCount--;
   } else if(type == WS_EVT_ERROR){
     //error was received from the other end
     Serial.printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
@@ -30,7 +34,25 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
   }
 }
 
+String getSensorsOutputJSONString(){
+        const int capacity=JSON_OBJECT_SIZE(5);
+        StaticJsonDocument<capacity>doc;
+
+        doc["co2"]=co2meter.getCO2();
+        doc["temp"]=bme280.readTemperature();
+        doc["humid"]=bme280.readHumidity();
+        doc["pressure"]=bme280.readPressure();
+        doc["alt"]=bme280.readAltitude();
+
+        String output="";
+        serializeJson(doc, output);
+        return output;
+}
+
 void WeatherServer::configure(){
+    co2meter.initCO2Meter();
+    bme280.initBME280();
+
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -57,6 +79,7 @@ void WeatherServer::configure(){
 
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
     server.begin();
+    serverIsReady=true;
 }
 
 void WeatherServer::defineRESTRoutes(){
@@ -123,4 +146,14 @@ void WeatherServer::defineRESTRoutes(){
         request->send(404);
       }
 });
+}
+
+void WeatherServer::sendUpdatesToConnectedWebSocketClients(){
+
+  Serial.print("Clients: "); Serial.print(WSClientCount);
+  Serial.println();
+
+  if(serverIsReady && WSClientCount>0){
+    ws.textAll(getSensorsOutputJSONString());
+  }    
 }
