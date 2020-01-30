@@ -47,6 +47,7 @@ void WeatherServer::configure(){
 
     defineRESTRoutes();    
 
+    DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
     server.begin();
 }
 
@@ -126,4 +127,12 @@ void WeatherServer::defineRESTRoutes(){
         serializeJson(doc, output);
         request->send(200, "application/json", output);
     });
+
+    server.onNotFound([](AsyncWebServerRequest *request) {
+      if (request->method() == HTTP_OPTIONS) {
+        request->send(200);
+      } else {
+        request->send(404);
+      }
+});
 }

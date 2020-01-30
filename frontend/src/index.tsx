@@ -6,15 +6,19 @@ import thunkMiddleware from 'redux-thunk';
 
 import { AppConnected } from "./components/App";
 import { AppReducer } from "./components/Reducers";
-import { fetchSensorInfoSuccess, fetchSensorInfoStart, fetchSensorInfoFail } from "./components/Actions";
 
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 const store = createStore(AppReducer, composeEnhancers(applyMiddleware(thunkMiddleware)));
 
-// store.dispatch(fetchSensorInfoStart());
-// store.dispatch(fetchSensorInfoSuccess({ co2: 50, humidity: 60, temperature: 70 }));
-// store.dispatch(fetchSensorInfoFail())
+// true - frontend server on localhost, esp server on esp device
+// false - frontend server on esp device, esp server on esp device
+const frontEndServerOnESP = false;
+
+export function getServerURL(): string {
+    return frontEndServerOnESP
+        ? ''
+        : 'http://192.168.0.100';
+}
 
 ReactDOM.render(
     <Provider store={store}>
