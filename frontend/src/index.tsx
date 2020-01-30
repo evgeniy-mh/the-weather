@@ -26,3 +26,11 @@ ReactDOM.render(
     </Provider>,
     document.getElementById("root")
 );
+
+let socket = new WebSocket("ws://192.168.0.100/ws");
+
+socket.onmessage = function(event) {
+    console.log(event.data);
+  };
+
+
