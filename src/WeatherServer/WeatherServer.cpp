@@ -6,23 +6,9 @@ AsyncWebServer server(80);
 CO2Meter co2meter;
 BME280 bme280;
 
-
-
-SPIFFSConfig cfg;
-
-
 WeatherServer::WeatherServer(){
   co2meter.initCO2Meter();
   bme280.initBME280();
-
-  cfg.setAutoFormat(false);
-  SPIFFS.setConfig(cfg);
-
-  if (SPIFFS.begin()) {
-    Serial.println("Mounted SPIFFS");
-  } else {
-    Serial.println("Unable to mount SPIFFS");
-  }
 }
 
 void WeatherServer::configure(){
@@ -61,6 +47,7 @@ String getContentType(String filename) { // convert the file extension to the MI
 
 void WeatherServer::defineRESTRoutes(){
 
+    // serve static files from /dist directory
     server.serveStatic("/", SPIFFS, "/dist");
 
     server.on("/files", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -74,19 +61,6 @@ void WeatherServer::defineRESTRoutes(){
         }
 
         request->send(200, "application/text", files);
-    });
-
-    server.on("/test", HTTP_GET, [](AsyncWebServerRequest *request){
-        String path="/index.html";
-        String contentType = getContentType(path);
-
-        Dir dir = SPIFFS.openDir("/");
-        if (SPIFFS.exists(path)) {
-            request->send(SPIFFS, path);
-        }else{
-          Serial.print("Can't find file:"); Serial.println(path);
-          request->send(500);
-        }        
     });
 
     server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request){
