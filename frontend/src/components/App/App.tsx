@@ -1,7 +1,7 @@
 import * as React from "react";
 import { connect } from 'react-redux'
-import { fetchSensorInfo } from "./SensorsService";
-import { AppState } from "./Reducers";
+import { fetchSensorInfo } from "../../Services/SensorsService";
+import { AppState } from "../../Reducers";
 
 interface ComponentState {
     isDataLoaded: boolean;
@@ -16,26 +16,18 @@ interface Dispatch {
 
 type Props = ComponentState & Dispatch;
 
-const mapStateToProps = (state: AppState): ComponentState => {
-    const { co2 = 0, humidity = 0, temperature = 0, fetchStatus = 'loading' } = state.sensors;
+const mapStateToProps = (state: AppState): ComponentState => ({
+    isDataLoaded: state.sensors.fetchStatus ? state.sensors.fetchStatus === 'success' : false,
+    co2: state.sensors.co2,
+    temperature: state.sensors.temp,
+    humidity: state.sensors.humid,
+});
 
-    const isDataLoaded = fetchStatus === 'success';
-
-    return {
-        co2,
-        temperature,
-        humidity,
-        isDataLoaded,
+const mapDispatchToProps = (dispatch: any): Dispatch => ({
+    fetchSensorInfo: () => {
+        dispatch(fetchSensorInfo());
     }
-}
-
-const mapDispatchToProps = (dispatch: any): Dispatch => {
-    return {
-        fetchSensorInfo: () => {
-            dispatch(fetchSensorInfo());
-        }
-    };
-};
+});
 
 class App extends React.Component<Props> {
 

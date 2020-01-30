@@ -1,11 +1,10 @@
 // import { ThunkAction } from "redux-thunk";
 // import fetch from 'cross-fetch'
 
-import { fetchSensorInfoStart, fetchSensorInfoSuccess, fetchSensorInfoFail } from "./Actions"
+import { fetchSensorInfoStart, fetchSensorInfoSuccess, fetchSensorInfoFail } from "../Actions"
 import { getServerURL } from "..";
 
 export function fetchSensorInfo(): any {
-    console.log('fetchSensorInfo():');
     return async function (dispatch: any) {
         dispatch(fetchSensorInfoStart());
 
@@ -31,10 +30,10 @@ export function fetchSensorInfo(): any {
 
         dispatch(fetchSensorInfoSuccess({
             co2: jsonObj.co2,
-            temperature: jsonObj.temp,
-            humidity: jsonObj.humid,
+            temp: jsonObj.temp,
+            humid: jsonObj.humid,
             pressure: jsonObj.pressure,
-            altitude: jsonObj.alt,
+            alt: jsonObj.alt,
         }))
     }
 }
