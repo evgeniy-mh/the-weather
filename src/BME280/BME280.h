@@ -12,10 +12,10 @@
 class BME280{
     public:
         void initBME280();
-        float readTemperature();
-        float readPressure();
-        float readHumidity();
-        float readAltitude();
+        int readTemperature();
+        int readPressure();
+        int readHumidity();
+        int readAltitude();
 
         void printAllValuesToSerial();
 };

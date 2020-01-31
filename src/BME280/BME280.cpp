@@ -11,20 +11,20 @@ void BME280::initBME280(){
 }
 
 
-float BME280::readTemperature(){
-    return bme.readTemperature();
+int BME280::readTemperature(){
+    return (int)floor(bme.readTemperature());
 }
 
-float BME280::readPressure(){
-    return bme.readPressure() / 100.0F;
+int BME280::readPressure(){
+    return (int)floor(bme.readPressure() / 100.0F);
 }
 
-float BME280::readHumidity(){
-    return bme.readHumidity();
+int BME280::readHumidity(){
+    return (int)floor(bme.readHumidity());
 }
 
-float BME280::readAltitude(){
-    return bme.readAltitude(SEA_LEVEL_PRESSURE_HPA);
+int BME280::readAltitude(){
+    return (int)floor(bme.readAltitude(SEA_LEVEL_PRESSURE_HPA));
 }
 
 void BME280::printAllValuesToSerial(){
