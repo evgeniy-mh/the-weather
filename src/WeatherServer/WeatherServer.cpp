@@ -1,6 +1,8 @@
 #include "./WeatherServer.h"
 #include <FS.h>
 
+#include "../SensorValuesLogger/SensorValuesLogger.h"
+
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
 int WSClientCount=0;
@@ -100,6 +102,16 @@ void WeatherServer::defineRESTRoutes(){
         request->send(200, "application/text", files);
     });
 
+    server.on("/log", HTTP_POST, [](AsyncWebServerRequest *request){
+        SensorValuesLogger logger;
+        
+        String n=request->getParam("n",true,false)->value();
+
+        String* respond=logger.getEntireLogCSV(atoi(n.c_str()));
+        request->send(200, "application/text", *respond);
+        delete respond;
+    });
+
     server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request){
         const int capacity=JSON_OBJECT_SIZE(5);
         StaticJsonDocument<capacity>doc;
@@ -149,11 +161,10 @@ void WeatherServer::defineRESTRoutes(){
 }
 
 void WeatherServer::sendUpdatesToConnectedWebSocketClients(){
-
-  Serial.print("Clients: "); Serial.print(WSClientCount);
-  Serial.println();
-
   if(serverIsReady && WSClientCount>0){
+    Serial.print("Clients: "); Serial.print(WSClientCount);
+    Serial.println();
+
     ws.textAll(getSensorsOutputJSONString());
   }    
 }
