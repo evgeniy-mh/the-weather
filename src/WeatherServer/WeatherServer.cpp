@@ -1,21 +1,12 @@
 #include "./WeatherServer.h"
-#include <FS.h>
-
-#include "../SensorValuesLogger/SensorValuesLogger.h"
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
 int WSClientCount=0;
 bool serverIsReady=false;
 
-
-CO2Meter co2meter;
-BME280 bme280;
-
-SensorValuesLogger *logger;
-
-WeatherServer::WeatherServer(){
-  
+WeatherServer::WeatherServer(SensorValuesLogger *logger){
+  this->logger=logger;
 }
 
 void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
@@ -38,25 +29,7 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
   }
 }
 
-String getSensorsOutputJSONString(){
-        const int capacity=JSON_OBJECT_SIZE(5);
-        StaticJsonDocument<capacity>doc;
-
-        doc["co2"]=co2meter.getCO2();
-        doc["temp"]=bme280.readTemperature();
-        doc["humid"]=bme280.readHumidity();
-        doc["pressure"]=bme280.readPressure();
-        doc["alt"]=bme280.readAltitude();
-
-        String output="";
-        serializeJson(doc, output);
-        return output;
-}
-
 void WeatherServer::configure(){
-    co2meter.initCO2Meter();
-    bme280.initBME280();
-
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -104,43 +77,27 @@ void WeatherServer::defineRESTRoutes(){
         request->send(200, "application/text", files);
     });
 
-    server.on("/log-create", HTTP_POST, [](AsyncWebServerRequest *request){
+    server.on("/log-create", HTTP_POST, [this](AsyncWebServerRequest *request){
         String n=request->getParam("n",true,false)->value();
-        logger= new SensorValuesLogger(atoi(n.c_str()));
+        this->logger= new SensorValuesLogger(atoi(n.c_str()));
     });
 
-    server.on("/log-populate", HTTP_POST, [](AsyncWebServerRequest *request){
+    server.on("/log-populate", HTTP_POST, [this](AsyncWebServerRequest *request){
         Serial.print(F("Free heap before populating log: "));
         Serial.print(ESP.getFreeHeap());
         Serial.println();
 
-        logger->addMockValuesToLog();
+        this->logger->addMockValuesToLog();
 
         Serial.print(F("Free heap after populating log: "));
         Serial.print(ESP.getFreeHeap());
         Serial.println();
     });
 
-    server.on("/log-get", HTTP_POST, [](AsyncWebServerRequest *request){
-        String* respond=logger->getEntireLogCSV();
+    server.on("/log-get", HTTP_POST, [this](AsyncWebServerRequest *request){
+        String* respond=this->logger->getEntireLogCSV();
         request->send(200, "text/plain", *respond);
         delete respond;
-    });
-
-    server.on("/info", HTTP_GET, [](AsyncWebServerRequest *request){
-        const int capacity=JSON_OBJECT_SIZE(5);
-        StaticJsonDocument<capacity>doc;
-
-        doc["co2"]=co2meter.getCO2();
-        doc["temp"]=bme280.readTemperature();
-        doc["humid"]=bme280.readHumidity();
-        doc["pressure"]=bme280.readPressure();
-        doc["alt"]=bme280.readAltitude();
-
-        String output="";
-        serializeJson(doc, output);
-
-        request->send(200, "application/json", output);
     });
 
     server.on("/cpuinfo", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -180,6 +137,9 @@ void WeatherServer::sendUpdatesToConnectedWebSocketClients(){
     Serial.print("Clients: "); Serial.print(WSClientCount);
     Serial.println();
 
-    ws.textAll(getSensorsOutputJSONString());
+    // ws.textAll(getSensorsOutputJSONString());
+    String* res=logger->getNewestEntryJSON();
+    ws.textAll(*res);
+    delete res;
   }    
 }

@@ -1,22 +1,50 @@
 #include "SensorValuesLogger.h"
 
-struct Entry{
-    String time;
-    int co2;
-    int temp;
-    int humid;
-};
+CO2Meter co2meter;
+BME280 bme280;
 
 int nOfEntries;
 Entry* sensorsLog;
 
 SensorValuesLogger::SensorValuesLogger(int numberOfLogEntries){
+    co2meter.initCO2Meter();
+    bme280.initBME280();
+
     nOfEntries=numberOfLogEntries;
     sensorsLog=new Entry[nOfEntries];
+
+    // fill log with zero values
+    for(int i=0;i<nOfEntries;i++){
+        sensorsLog[i].time=F("");
+        sensorsLog[i].co2=0;
+        sensorsLog[i].humid=0;
+        sensorsLog[i].temp=0;
+    }
 }
 
 SensorValuesLogger::~SensorValuesLogger(){
     delete [] sensorsLog;
+}
+
+void SensorValuesLogger::logSensorValues(){
+    Entry newEntry;
+    newEntry.co2=co2meter.getCO2();
+    newEntry.humid=bme280.readHumidity();
+    newEntry.temp =bme280.readTemperature();
+    newEntry.time=millis();
+    addLogEntry(newEntry);
+}
+
+String* SensorValuesLogger::getNewestEntryJSON(){
+    const int capacity=JSON_OBJECT_SIZE(4);
+        StaticJsonDocument<capacity>doc;
+        doc[F("co2")]=sensorsLog[0].co2;
+        doc[F("humid")]=sensorsLog[0].humid;
+        doc[F("temp")]=sensorsLog[0].temp;        
+        doc[F("time")]=sensorsLog[0].time;
+        String* output=new String(F(""));
+        serializeJson(doc, *output);
+        return output;
 }
 
 void SensorValuesLogger::addMockValuesToLog(){
@@ -42,4 +70,12 @@ String* SensorValuesLogger::getEntireLogCSV(){
         res->concat(F(";"));
     }
     return res;
+}
+
+// Add new entry to queue end, remove entry from queue start(oldest element)
+void SensorValuesLogger::addLogEntry(Entry newEntry){
+    for(int i=nOfEntries-1;i>=1;i--){
+        sensorsLog[i]=sensorsLog[i-1];
+    }
+    sensorsLog[0]=newEntry;
 }

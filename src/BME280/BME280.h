@@ -1,5 +1,4 @@
-#ifndef BME280_H
-#define BME280_H
+#pragma once
 
 #include <Wire.h>
 #include <SPI.h>
@@ -19,5 +18,3 @@ class BME280{
 
         void printAllValuesToSerial();
 };
-
-#endif

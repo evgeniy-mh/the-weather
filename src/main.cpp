@@ -1,14 +1,13 @@
 #include <Arduino.h>
 #include "./WeatherServer/WeatherServer.h"
+#include "./SensorValuesLogger/SensorValuesLogger.h"
 
-WeatherServer weatherServer;
+SensorValuesLogger *logger;
+WeatherServer* weatherServer;
 SPIFFSConfig cfg;
 
 void setup() {
   Serial.begin(9600);  
-
-  // co2Meter.initCO2Meter();
-  // bme280.initBME280();
 
   cfg.setAutoFormat(false);
   SPIFFS.setConfig(cfg);
@@ -19,7 +18,9 @@ void setup() {
     Serial.println("Unable to mount SPIFFS");
   }
   
-  weatherServer.configure();
+  logger=new SensorValuesLogger(10);
+  weatherServer=new WeatherServer(logger);
+  weatherServer->configure();
 }
 
 // 1000 = 1 sec
@@ -29,6 +30,12 @@ unsigned long time_now = 0;
 void loop() {
   if(millis() - time_now > period){
         time_now = millis();        
-        weatherServer.sendUpdatesToConnectedWebSocketClients();
+        logger->logSensorValues();
+        weatherServer->sendUpdatesToConnectedWebSocketClients();
+
+        Serial.print(F("Heap spce:")); Serial.print(ESP.getFreeHeap());
+        Serial.println();
+        Serial.print(F("Heap fragm:")); Serial.print(ESP.getHeapFragmentation());
+        Serial.println();
     }
 }

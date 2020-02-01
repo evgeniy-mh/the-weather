@@ -1,5 +1,4 @@
-#ifndef CO2Meter_H
-#define CO2Meter_H
+#pragma once
 
 #include <Arduino.h>
 #include "MHZ19.h" 
@@ -16,5 +15,3 @@ class CO2Meter{
 
         void printPPMValueToSerial();
 };
-
-#endif

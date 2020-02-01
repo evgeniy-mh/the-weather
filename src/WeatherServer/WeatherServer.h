@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef ESP32
 #include <WiFi.h>
 #include <AsyncTCP.h>
@@ -10,17 +12,18 @@
 #include "AsyncJson.h"
 #include "ArduinoJson.h"
 
-#include "./CO2Meter/CO2Meter.h"
-#include "./BME280/BME280.h"
+#include <FS.h>
+#include "../SensorValuesLogger/SensorValuesLogger.h"
 
 class WeatherServer{
     public:
         const char* ssid = "dlink";
         const char* password = "768513783";
-        WeatherServer();
+        WeatherServer(SensorValuesLogger* logger);
         void configure();
         void sendUpdatesToConnectedWebSocketClients();
 
     private:
+        SensorValuesLogger *logger;
         void defineRESTRoutes();
 };
