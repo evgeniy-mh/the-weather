@@ -12,6 +12,8 @@ bool serverIsReady=false;
 CO2Meter co2meter;
 BME280 bme280;
 
+SensorValuesLogger *logger;
+
 WeatherServer::WeatherServer(){
   
 }
@@ -102,13 +104,26 @@ void WeatherServer::defineRESTRoutes(){
         request->send(200, "application/text", files);
     });
 
-    server.on("/log", HTTP_POST, [](AsyncWebServerRequest *request){
-        SensorValuesLogger logger;
-        
+    server.on("/log-create", HTTP_POST, [](AsyncWebServerRequest *request){
         String n=request->getParam("n",true,false)->value();
+        logger= new SensorValuesLogger(atoi(n.c_str()));
+    });
 
-        String* respond=logger.getEntireLogCSV(atoi(n.c_str()));
-        request->send(200, "application/text", *respond);
+    server.on("/log-populate", HTTP_POST, [](AsyncWebServerRequest *request){
+        Serial.print(F("Free heap before populating log: "));
+        Serial.print(ESP.getFreeHeap());
+        Serial.println();
+
+        logger->addMockValuesToLog();
+
+        Serial.print(F("Free heap after populating log: "));
+        Serial.print(ESP.getFreeHeap());
+        Serial.println();
+    });
+
+    server.on("/log-get", HTTP_POST, [](AsyncWebServerRequest *request){
+        String* respond=logger->getEntireLogCSV();
+        request->send(200, "text/plain", *respond);
         delete respond;
     });
 

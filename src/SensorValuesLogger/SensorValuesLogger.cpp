@@ -7,32 +7,39 @@ struct Entry{
     int humid;
 };
 
-String* SensorValuesLogger::getEntireLogCSV(int n){
-    Entry* log=new Entry[n];
+int nOfEntries;
+Entry* sensorsLog;
 
-    for(int i=0;i<n;i++){
-        log[i].time="hi handsome";
-        log[i].co2=888;
-        log[i].humid=777;
-        log[i].temp=444;
+SensorValuesLogger::SensorValuesLogger(int numberOfLogEntries){
+    nOfEntries=numberOfLogEntries;
+    sensorsLog=new Entry[nOfEntries];
+}
+
+SensorValuesLogger::~SensorValuesLogger(){
+    delete [] sensorsLog;
+}
+
+void SensorValuesLogger::addMockValuesToLog(){
+    for(int i=0;i<nOfEntries;i++){
+        sensorsLog[i].time=F("2019 07 13 15:22:33");
+        sensorsLog[i].co2=888;
+        sensorsLog[i].humid=777;
+        sensorsLog[i].temp=444;
     }
+}
 
+String* SensorValuesLogger::getEntireLogCSV(){
     String* res=new String("");
-    for(int i=0;i<n;i++){
-        res->concat(log[i].time);
-        res->concat(" ");
-
-
-        res->concat(log[i].co2);
-        res->concat(" ");
-
-        res->concat(log[i].humid);
-        res->concat(" ");
-
-        res->concat(log[i].temp);
-        res->concat(";");
+    const String SPACE=F(" ");
+    for(int i=0;i<nOfEntries;i++){
+        res->concat(sensorsLog[i].time);
+        res->concat(SPACE);
+        res->concat(sensorsLog[i].co2);
+        res->concat(SPACE);
+        res->concat(sensorsLog[i].humid);
+        res->concat(SPACE);
+        res->concat(sensorsLog[i].temp);
+        res->concat(F(";"));
     }
-    delete [] log;
-
     return res;
 }

@@ -2,7 +2,9 @@
 
 class SensorValuesLogger{
     public:
-        void start();
-        String* getEntireLogCSV(int n);
+        SensorValuesLogger(int numberOfLogEntries);
+        ~SensorValuesLogger();
+        String* getEntireLogCSV();
 
+        void addMockValuesToLog();
 };
