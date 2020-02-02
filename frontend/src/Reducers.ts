@@ -1,29 +1,40 @@
 import { SensorInfoAction } from './Actions';
-import { SensorInfo, emptySensorsInfo } from './Models';
+import { SersorsInfoLog, emptySensorsInfoLog, sortLogByAscendingTime } from './Models';
 
 function sensorsInfoReducer(
-    state: SensorInfo = emptySensorsInfo,
+    state: SersorsInfoLog = emptySensorsInfoLog,
     action: SensorInfoAction
-): SensorInfo {
+): SersorsInfoLog {
     switch (action.type) {
         case 'FETCH_SENSOR_INFO_SUCCESS':
-            return { ...action.payload };
+            let resultLogArray = action.payload;
+            if (resultLogArray.length > 1) {
+                resultLogArray = sortLogByAscendingTime(resultLogArray);
+            }
+            return {
+                fetchStatus: 'success',
+                log: [...state.log, ...resultLogArray]
+            };
         case 'FETCH_SENSOR_INFO_STARTED':
-            return { ...emptySensorsInfo, fetchStatus: 'loading' }
+            return {
+                log: state.log, fetchStatus: 'loading'
+            }
         case 'FETCH_SENSOR_INFO_FAIL':
-            return { ...emptySensorsInfo, fetchStatus: 'fail' }
+            return {
+                log: state.log, fetchStatus: 'fail'
+            }
         default:
             return state;
     }
 }
 
 export type AppState = Readonly<{
-    sensors: SensorInfo;
+    sensorsLog: SersorsInfoLog;
 }>
 
 function createEmptyAppState(): AppState {
     return {
-        sensors: emptySensorsInfo
+        sensorsLog: emptySensorsInfoLog
     }
 }
 
@@ -32,6 +43,6 @@ export function AppReducer(
     action: SensorInfoAction
 ): AppState {
     return {
-        sensors: sensorsInfoReducer(state.sensors, action)
+        sensorsLog: sensorsInfoReducer(state.sensorsLog, action)
     }
 }

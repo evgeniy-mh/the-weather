@@ -1,34 +1,31 @@
 import * as React from "react";
 import { connect } from 'react-redux'
-import { connectViaWebSocket } from "../../Services/SensorsService";
+import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
 import { AppState } from "../../Reducers";
+import { SensorsInfoEntry } from "../../Models";
 
 interface ComponentState {
     isDataLoaded: boolean;
-    co2: number;
-    temperature: number;
-    humidity: number;
+    sensorValuesLog: SensorsInfoEntry[];
 }
 
 interface Dispatch {
-    // fetchSensorInfo: () => void;
+    fetchSensorFullLog: () => void;
     connectViaWebSocket: () => void;
 }
 
 type Props = ComponentState & Dispatch;
 
 const mapStateToProps = (state: AppState): ComponentState => ({
-    isDataLoaded: state.sensors.fetchStatus ? state.sensors.fetchStatus === 'success' : false,
-    co2: state.sensors.co2,
-    temperature: state.sensors.temp,
-    humidity: state.sensors.humid,
+    isDataLoaded: state.sensorsLog.fetchStatus ? state.sensorsLog.fetchStatus === 'success' : false,
+    sensorValuesLog: state.sensorsLog.log,
 });
 
 const mapDispatchToProps = (dispatch: any): Dispatch => ({
-    // fetchSensorInfo: () => {
-    //     dispatch(fetchSensorInfo());
-    // },
-    connectViaWebSocket: ()=>{
+    fetchSensorFullLog: () => {
+        dispatch(fetchSensorFullLog());
+    },
+    connectViaWebSocket: () => {
         dispatch(connectViaWebSocket());
     }
 });
@@ -36,35 +33,37 @@ const mapDispatchToProps = (dispatch: any): Dispatch => ({
 class App extends React.Component<Props> {
 
     componentDidMount() {
+        this.props.fetchSensorFullLog();
         this.props.connectViaWebSocket();
     }
 
     render() {
-        const { co2, humidity, temperature, isDataLoaded } = this.props;
+        const { sensorValuesLog, isDataLoaded } = this.props;
 
         if (isDataLoaded) {
-            return (
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Name</th>
-                            <th>Value</th>
-                        </tr>
-                        <tr>
-                            <td>CO2</td>
-                            <td>{co2}</td>
-                        </tr>
-                        <tr>
-                            <td>Temperature</td>
-                            <td>{temperature}</td>
-                        </tr>
-                        <tr>
-                            <td>Humidity</td>
-                            <td>{humidity}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            );
+            return <div>{JSON.stringify(sensorValuesLog)}</div>
+            // return (
+            //     <table>
+            //         <tbody>
+            //             <tr>
+            //                 <th>Name</th>
+            //                 <th>Value</th>
+            //             </tr>
+            //             <tr>
+            //                 <td>CO2</td>
+            //                 <td>{co2}</td>
+            //             </tr>
+            //             <tr>
+            //                 <td>Temperature</td>
+            //                 <td>{temperature}</td>
+            //             </tr>
+            //             <tr>
+            //                 <td>Humidity</td>
+            //                 <td>{humidity}</td>
+            //             </tr>
+            //         </tbody>
+            //     </table>
+            // );
         } else {
             return 'data is loading';
         }
