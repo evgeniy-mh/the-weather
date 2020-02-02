@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
 import { AppState } from "../../Reducers";
 import { SensorsInfoEntry } from "../../Models";
+import { SensorsLineChart } from "../SensorsLineChart/SensorsLineChart";
 
 interface ComponentState {
     isDataLoaded: boolean;
@@ -41,29 +42,13 @@ class App extends React.Component<Props> {
         const { sensorValuesLog, isDataLoaded } = this.props;
 
         if (isDataLoaded) {
-            return <div>{JSON.stringify(sensorValuesLog)}</div>
-            // return (
-            //     <table>
-            //         <tbody>
-            //             <tr>
-            //                 <th>Name</th>
-            //                 <th>Value</th>
-            //             </tr>
-            //             <tr>
-            //                 <td>CO2</td>
-            //                 <td>{co2}</td>
-            //             </tr>
-            //             <tr>
-            //                 <td>Temperature</td>
-            //                 <td>{temperature}</td>
-            //             </tr>
-            //             <tr>
-            //                 <td>Humidity</td>
-            //                 <td>{humidity}</td>
-            //             </tr>
-            //         </tbody>
-            //     </table>
-            // );
+            // return <div>{JSON.stringify(sensorValuesLog)}</div>
+            return (
+                <>
+                    <span>entries count: {sensorValuesLog.length}</span>
+                    <SensorsLineChart data={sensorValuesLog} />
+                </>
+            );
         } else {
             return 'data is loading';
         }

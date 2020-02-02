@@ -7,13 +7,26 @@ function sensorsInfoReducer(
 ): SersorsInfoLog {
     switch (action.type) {
         case 'FETCH_SENSOR_INFO_SUCCESS':
-            let resultLogArray = action.payload;
-            if (resultLogArray.length > 1) {
-                resultLogArray = sortLogByAscendingTime(resultLogArray);
+            let newValues = action.payload;
+            if (newValues.length > 1) {
+                newValues = sortLogByAscendingTime(newValues);
             }
+
+            let newLog = [...state.log, ...newValues];
+
+            if (newLog.length > 15) {
+                newLog = newLog.filter((entry, index) => {
+                    if (index % 5 === 0) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+            }
+
             return {
                 fetchStatus: 'success',
-                log: [...state.log, ...resultLogArray]
+                log: newLog
             };
         case 'FETCH_SENSOR_INFO_STARTED':
             return {

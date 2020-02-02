@@ -25,10 +25,12 @@
     "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
+    "@types/recharts": "^1.8.5",
     "cross-fetch": "^3.0.4",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-redux": "^7.1.3",
+    "recharts": "^2.0.0-beta.1",
     "redux-thunk": "^2.3.0"
   }
 }
