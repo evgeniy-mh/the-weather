@@ -17,43 +17,42 @@ export function connectViaWebSocket(): any {
                 co2: jsonObj.co2,
                 temp: jsonObj.temp,
                 humid: jsonObj.humid,
-                pressure: jsonObj.pressure,
-                alt: jsonObj.alt,
+                time: jsonObj.time,
             }))
         };
     }
 }
 
-export function fetchSensorInfo(): any {
-    return async function (dispatch: any) {
-        dispatch(fetchSensorInfoStart());
+// export function fetchSensorInfo(): any {
+//     return async function (dispatch: any) {
+//         dispatch(fetchSensorInfoStart());
 
-        const res = await fetch(`${getServerURL()}/info`,
-            {
-                method: 'GET',
-                headers: {
-                    "Accept": "application/json, text/javascript, */*; q=0.01",
-                    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-                    "Content-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
-                    "Content-Type": "text/plain",
-                }
-            }
-        );
+//         const res = await fetch(`${getServerURL()}/info`,
+//             {
+//                 method: 'GET',
+//                 headers: {
+//                     "Accept": "application/json, text/javascript, */*; q=0.01",
+//                     "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+//                     "Content-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+//                     "Content-Type": "text/plain",
+//                 }
+//             }
+//         );
 
 
-        if (!res.ok) {
-            console.log(res.statusText);
-            dispatch(fetchSensorInfoFail());
-        }
+//         if (!res.ok) {
+//             console.log(res.statusText);
+//             dispatch(fetchSensorInfoFail());
+//         }
 
-        const jsonObj = await res.json();
+//         const jsonObj = await res.json();
 
-        dispatch(fetchSensorInfoSuccess({
-            co2: jsonObj.co2,
-            temp: jsonObj.temp,
-            humid: jsonObj.humid,
-            pressure: jsonObj.pressure,
-            alt: jsonObj.alt,
-        }))
-    }
-}
+//         dispatch(fetchSensorInfoSuccess({
+//             co2: jsonObj.co2,
+//             temp: jsonObj.temp,
+//             humid: jsonObj.humid,
+//             pressure: jsonObj.pressure,
+//             alt: jsonObj.alt,
+//         }))
+//     }
+// }

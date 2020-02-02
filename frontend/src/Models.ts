@@ -6,14 +6,12 @@ export interface SensorInfo extends FetchStatus {
     readonly co2: number;
     readonly temp: number;
     readonly humid: number;
-    readonly pressure: number;
-    readonly alt: number;
+    readonly time: number;
 }
 
 export const emptySensorsInfo: SensorInfo = {
     co2: 0,
     temp: 0,
     humid: 0,
-    pressure: 0,
-    alt: 0,
+    time: 0,
 }

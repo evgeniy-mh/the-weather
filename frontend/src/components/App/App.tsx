@@ -1,6 +1,6 @@
 import * as React from "react";
 import { connect } from 'react-redux'
-import { fetchSensorInfo, connectViaWebSocket } from "../../Services/SensorsService";
+import { connectViaWebSocket } from "../../Services/SensorsService";
 import { AppState } from "../../Reducers";
 
 interface ComponentState {
@@ -11,7 +11,7 @@ interface ComponentState {
 }
 
 interface Dispatch {
-    fetchSensorInfo: () => void;
+    // fetchSensorInfo: () => void;
     connectViaWebSocket: () => void;
 }
 
@@ -25,9 +25,9 @@ const mapStateToProps = (state: AppState): ComponentState => ({
 });
 
 const mapDispatchToProps = (dispatch: any): Dispatch => ({
-    fetchSensorInfo: () => {
-        dispatch(fetchSensorInfo());
-    },
+    // fetchSensorInfo: () => {
+    //     dispatch(fetchSensorInfo());
+    // },
     connectViaWebSocket: ()=>{
         dispatch(connectViaWebSocket());
     }

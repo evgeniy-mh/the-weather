@@ -5,7 +5,7 @@
 #include "./BME280/BME280.h"
 
 struct Entry{
-    String time;
+    unsigned long ms;
     int co2;
     int temp;
     int humid;
@@ -17,7 +17,6 @@ class SensorValuesLogger{
         ~SensorValuesLogger();
         String* getEntireLogCSV();
         void logSensorValues();
-        void addMockValuesToLog();
         String* getNewestEntryJSON();
 
     private:

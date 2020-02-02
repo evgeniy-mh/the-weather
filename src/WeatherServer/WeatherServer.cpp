@@ -13,7 +13,7 @@ void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventTyp
   if(type == WS_EVT_CONNECT){
     //client connected
     Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
-    client->printf("Hello Client %u :)", client->id());
+    // client->printf("Hello Client %u :)", client->id());
     client->ping();
     WSClientCount++;
   } else if(type == WS_EVT_DISCONNECT){
@@ -77,24 +77,7 @@ void WeatherServer::defineRESTRoutes(){
         request->send(200, "application/text", files);
     });
 
-    server.on("/log-create", HTTP_POST, [this](AsyncWebServerRequest *request){
-        String n=request->getParam("n",true,false)->value();
-        this->logger= new SensorValuesLogger(atoi(n.c_str()));
-    });
-
-    server.on("/log-populate", HTTP_POST, [this](AsyncWebServerRequest *request){
-        Serial.print(F("Free heap before populating log: "));
-        Serial.print(ESP.getFreeHeap());
-        Serial.println();
-
-        this->logger->addMockValuesToLog();
-
-        Serial.print(F("Free heap after populating log: "));
-        Serial.print(ESP.getFreeHeap());
-        Serial.println();
-    });
-
-    server.on("/log-get", HTTP_POST, [this](AsyncWebServerRequest *request){
+    server.on("/log", HTTP_GET, [this](AsyncWebServerRequest *request){
         String* respond=this->logger->getEntireLogCSV();
         request->send(200, "text/plain", *respond);
         delete respond;
@@ -104,19 +87,19 @@ void WeatherServer::defineRESTRoutes(){
         const int capacity=JSON_OBJECT_SIZE(13);
         StaticJsonDocument<capacity>doc;
 
-        doc["FreeHeap"]=ESP.getFreeHeap();
-        doc["HeapFragmentation"]=ESP.getHeapFragmentation();
-        doc["MaxFreeBlockSize"]=ESP.getMaxFreeBlockSize();
-        doc["ChipId"]=ESP.getChipId();
-        doc["CoreVersion"]=ESP.getCoreVersion();
-        doc["SdkVersion"]=ESP.getSdkVersion();
-        doc["CpuFreqMHz"]=ESP.getCpuFreqMHz();
-        doc["SketchSize"]=ESP.getSketchSize();
-        doc["FreeSketchSpace"]=ESP.getFreeSketchSpace();
-        doc["FlashChipId"]=ESP.getFlashChipId();
-        doc["FlashChipSize"]=ESP.getFlashChipSize();
-        doc["FlashChipRealSize"]=ESP.getFlashChipRealSize();
-        doc["FlashChipSpeed"]=ESP.getFlashChipSpeed();
+        doc[F("FreeHeap")]=ESP.getFreeHeap();
+        doc[F("HeapFragmentation")]=ESP.getHeapFragmentation();
+        doc[F("MaxFreeBlockSize")]=ESP.getMaxFreeBlockSize();
+        doc[F("ChipId")]=ESP.getChipId();
+        doc[F("CoreVersion")]=ESP.getCoreVersion();
+        doc[F("SdkVersion")]=ESP.getSdkVersion();
+        doc[F("CpuFreqMHz")]=ESP.getCpuFreqMHz();
+        doc[F("SketchSize")]=ESP.getSketchSize();
+        doc[F("FreeSketchSpace")]=ESP.getFreeSketchSpace();
+        doc[F("FlashChipId")]=ESP.getFlashChipId();
+        doc[F("FlashChipSize")]=ESP.getFlashChipSize();
+        doc[F("FlashChipRealSize")]=ESP.getFlashChipRealSize();
+        doc[F("FlashChipSpeed")]=ESP.getFlashChipSpeed();
 
         String output="";
         serializeJson(doc, output);
@@ -137,9 +120,12 @@ void WeatherServer::sendUpdatesToConnectedWebSocketClients(){
     Serial.print("Clients: "); Serial.print(WSClientCount);
     Serial.println();
 
-    // ws.textAll(getSensorsOutputJSONString());
     String* res=logger->getNewestEntryJSON();
     ws.textAll(*res);
     delete res;
+
+    if(WSClientCount>DEFAULT_MAX_WS_CLIENTS){
+      ws.cleanupClients();
+    }
   }    
 }

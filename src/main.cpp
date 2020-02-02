@@ -33,9 +33,9 @@ void loop() {
         logger->logSensorValues();
         weatherServer->sendUpdatesToConnectedWebSocketClients();
 
-        Serial.print(F("Heap spce:")); Serial.print(ESP.getFreeHeap());
-        Serial.println();
-        Serial.print(F("Heap fragm:")); Serial.print(ESP.getHeapFragmentation());
-        Serial.println();
+        // Serial.print(F("Heap spce:")); Serial.print(ESP.getFreeHeap());
+        // Serial.println();
+        // Serial.print(F("Heap fragm:")); Serial.print(ESP.getHeapFragmentation());
+        // Serial.println();
     }
 }
