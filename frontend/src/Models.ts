@@ -27,6 +27,12 @@ export interface SersorsInfoLog extends FetchStatus {
     log: SensorsInfoEntry[];
 }
 
+export interface Co2ChartData {
+    readonly values: {
+        readonly co2: number,
+        readonly time: string,
+    }[]
+}
 
 export const emptySensorsInfoLog: SersorsInfoLog = {
     log: []

@@ -2,8 +2,9 @@ import * as React from "react";
 import { connect } from 'react-redux'
 import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
 import { AppState } from "../../Reducers";
-import { SensorsInfoEntry } from "../../Models";
+import { SensorsInfoEntry, Co2ChartData } from "../../Models";
 import { SensorsLineChart } from "../SensorsLineChart/SensorsLineChart";
+import { Co2Chart } from "../Charts/Co2Chart";
 
 interface ComponentState {
     isDataLoaded: boolean;
@@ -46,11 +47,20 @@ class App extends React.Component<Props> {
             return (
                 <>
                     <span>entries count: {sensorValuesLog.length}</span>
-                    <SensorsLineChart data={sensorValuesLog} />
+                    <Co2Chart data={this.convertToCo2ChartData(sensorValuesLog)} />
                 </>
             );
         } else {
             return 'data is loading';
+        }
+    }
+
+    convertToCo2ChartData(data: SensorsInfoEntry[]): Co2ChartData {
+        return {
+            values: data.map((e) => ({
+                co2: e.co2,
+                time: `${e.time.getHours()}:${e.time.getMinutes()}:${e.time.getSeconds()}`
+            })),
         }
     }
 }
