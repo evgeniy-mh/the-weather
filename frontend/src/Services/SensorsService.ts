@@ -1,21 +1,19 @@
 import { fetchSensorInfoSuccess, fetchSensorInfoStart, fetchSensorInfoFail } from "../Actions"
 import { getServerURL } from "..";
-import { parseLogCSV } from "../Models";
+import { parseLogCSV, sortLogByAscendingTime, SensorsRawInfoEntry, processTime, SensorsInfoEntry } from "../Models";
 
 export function connectViaWebSocket(): any {
     return async function (dispatch: any) {
         let socket = new WebSocket("ws://192.168.0.100/ws");
         socket.onmessage = function (event) {
-            console.log(event.data);
-
-            const jsonObj = JSON.parse(event.data);
-
+            const jsonObj: SensorsRawInfoEntry = JSON.parse(event.data);
             dispatch(fetchSensorInfoSuccess([{
                 co2: jsonObj.co2,
-                temp: jsonObj.temp,
-                humid: jsonObj.humid,
-                time: jsonObj.time,
+                temperature: jsonObj.temp,
+                humidity: jsonObj.humid,
+                time: new Date(),
             }]))
+            console.log(jsonObj);
         };
 
         socket.onclose = function (closeEvent) {
@@ -52,8 +50,15 @@ export function fetchSensorFullLog(): any {
             dispatch(fetchSensorInfoFail());
         }
         const log = await res.text();
-        dispatch(fetchSensorInfoSuccess(
+
+        const sortedAndParsedRawValues: SensorsRawInfoEntry[] = sortLogByAscendingTime(
             parseLogCSV(log)
-        ))
+        )
+
+        const valuesWithProcessedTime: SensorsInfoEntry[] = processTime(sortedAndParsedRawValues);
+
+        dispatch(
+            fetchSensorInfoSuccess(valuesWithProcessedTime)
+        )
     }
 }

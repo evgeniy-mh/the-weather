@@ -7,12 +7,7 @@ function sensorsInfoReducer(
 ): SersorsInfoLog {
     switch (action.type) {
         case 'FETCH_SENSOR_INFO_SUCCESS':
-            let newValues = action.payload;
-            if (newValues.length > 1) {
-                newValues = sortLogByAscendingTime(newValues);
-            }
-
-            let newLog = [...state.log, ...newValues];
+            let newLog = [...state.log, ...action.payload];
 
             if (newLog.length > 15) {
                 newLog = newLog.filter((entry, index) => {

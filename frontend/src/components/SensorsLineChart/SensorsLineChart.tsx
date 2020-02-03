@@ -9,7 +9,6 @@ interface Props {
 }
 
 export const SensorsLineChart = ({ data }: Props) => {
-
     return (
         <>
             <ResponsiveContainer width='80%' height={300}>
@@ -25,36 +24,6 @@ export const SensorsLineChart = ({ data }: Props) => {
                     <Tooltip />
                     <Legend />
                     <Line type="monotone" dataKey="co2" stroke="#8884d8" activeDot={{ r: 8 }} />
-                </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer width='80%' height={300}>
-                <LineChart
-                    data={data}
-                    margin={{
-                        top: 5, right: 30, left: 20, bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis domain={[0, 'dataMax + 15']} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="temp" name="temperature" stroke="#8884d8" activeDot={{ r: 8 }} />
-                </LineChart>
-            </ResponsiveContainer>
-            <ResponsiveContainer width='80%' height={300}>
-                <LineChart
-                    data={data}
-                    margin={{
-                        top: 5, right: 30, left: 20, bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="time" />
-                    <YAxis domain={[0, 'dataMax + 15']} />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="humid" name="humidity" stroke="#8884d8" activeDot={{ r: 8 }} />
                 </LineChart>
             </ResponsiveContainer>
         </>

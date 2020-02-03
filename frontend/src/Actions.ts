@@ -1,4 +1,4 @@
-import { SensorsInfoEntry, emptySensorsInfoLog } from "./Models";
+import { SensorsRawInfoEntry, emptySensorsInfoLog, SensorsInfoEntry } from "./Models";
 
 export type SENSOR_INFO_ACTION =
     'FETCH_SENSOR_INFO_STARTED'
