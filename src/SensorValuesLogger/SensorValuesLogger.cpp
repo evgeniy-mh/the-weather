@@ -29,8 +29,6 @@ SensorValuesLogger::~SensorValuesLogger(){
 void SensorValuesLogger::logSensorValues(){
     Entry newEntry;
     newEntry.co2=co2meter.getCO2();
-    // newEntry.humid=bme280.readHumidity();
-    // newEntry.temp =bme280.readTemperature();
     newEntry.ms=millis();
     addLogEntry(newEntry);
 }
@@ -38,25 +36,20 @@ void SensorValuesLogger::logSensorValues(){
 String* SensorValuesLogger::getNewestEntryJSON(){
     const int capacity=JSON_OBJECT_SIZE(10);
         StaticJsonDocument<capacity>doc;
-        // doc[F("co2")]=sensorsLog[0].co2;
-        // doc[F("humid")]=sensorsLog[0].humid;
-        // doc[F("temp")]=sensorsLog[0].temp;        
-        // doc[F("time")]=777;
-        boolean added;        
-        added=doc[F("co2")].set(sensorsLog[0].co2);
+        boolean added=doc[F("co2")].set(sensorsLog[0].co2);
         if(!added){
             Serial.println(F("Unable to add co2"));
         }
 
-        // added=doc[F("humid")].set(sensorsLog[0].humid);
-        // if(!added){
-        //     Serial.println(F("Unable to add humid"));
-        // }
+        added=doc[F("humid")].set(bme280.readHumidity());
+        if(!added){
+            Serial.println(F("Unable to add humid"));
+        }
 
-        // added=doc[F("temp")].set(sensorsLog[0].temp);
-        // if(!added){
-        //     Serial.println(F("Unable to add temp"));
-        // }
+        added=doc[F("temp")].set(bme280.readTemperature());
+        if(!added){
+            Serial.println(F("Unable to add temp"));
+        }
 
         added=doc[F("time")].set(sensorsLog[0].ms);
         if(!added){
@@ -72,13 +65,12 @@ String* SensorValuesLogger::getEntireLogCSV(){
     String* res=new String("");
     const String SPACE=F(" ");
     for(int i=0;i<nOfEntries;i++){
+        if(sensorsLog[i].ms==0 || sensorsLog[i].co2==0){
+            continue;
+        }
         res->concat(sensorsLog[i].ms);
         res->concat(SPACE);
         res->concat(sensorsLog[i].co2);
-        // res->concat(SPACE);
-        // res->concat(sensorsLog[i].humid);
-        // res->concat(SPACE);
-        // res->concat(sensorsLog[i].temp);
         res->concat(F(";"));
     }
     return res;
