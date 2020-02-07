@@ -9,14 +9,10 @@ function sensorsInfoReducer(
         case 'FETCH_SENSOR_INFO_SUCCESS':
             let newLog = [...state.log, ...action.payload];
 
-            if (newLog.length > 15) {
-                newLog = newLog.filter((entry, index) => {
-                    if (index % 5 === 0) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                });
+            // TODO: move to global constants
+            const maxElementsCount = 50;
+            if (newLog.length > maxElementsCount) {
+                newLog = newLog.slice(newLog.length - maxElementsCount);
             }
 
             return {

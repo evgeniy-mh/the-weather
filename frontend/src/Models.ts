@@ -69,14 +69,16 @@ export function processTime(log: SensorsRawInfoEntry[]): SensorsInfoEntry[] {
     const result: SensorsInfoEntry[] = [];
 
     const now: number = Date.now();
-    let timeMsDelta = log[1].time - log[0].time;
+    const timeMsDelta = log[1].time - log[0].time;
+    let temp = timeMsDelta;
     for (let i = log.length - 1; i >= 0; i--) {
         result.push({
             co2: log[i].co2,
             humidity: log[i].humid,
             temperature: log[i].temp,
-            time: new Date(now - timeMsDelta),
+            time: new Date(now - temp),
         });
+        temp += timeMsDelta;
     }
     return result;
 }
