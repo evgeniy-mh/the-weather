@@ -7,8 +7,8 @@
 struct Entry{
     unsigned long ms;
     int co2;
-    int temp;
-    int humid;
+    // int temp;
+    // int humid;
 };
 
 class SensorValuesLogger{

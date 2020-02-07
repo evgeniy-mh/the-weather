@@ -17,8 +17,8 @@ SensorValuesLogger::SensorValuesLogger(int numberOfLogEntries){
     for(int i=0;i<nOfEntries;i++){
         sensorsLog[i].ms=0;
         sensorsLog[i].co2=0;
-        sensorsLog[i].humid=0;
-        sensorsLog[i].temp=0;
+        // sensorsLog[i].humid=0;
+        // sensorsLog[i].temp=0;
     }
 }
 
@@ -29,8 +29,8 @@ SensorValuesLogger::~SensorValuesLogger(){
 void SensorValuesLogger::logSensorValues(){
     Entry newEntry;
     newEntry.co2=co2meter.getCO2();
-    newEntry.humid=bme280.readHumidity();
-    newEntry.temp =bme280.readTemperature();
+    // newEntry.humid=bme280.readHumidity();
+    // newEntry.temp =bme280.readTemperature();
     newEntry.ms=millis();
     addLogEntry(newEntry);
 }
@@ -48,15 +48,15 @@ String* SensorValuesLogger::getNewestEntryJSON(){
             Serial.println(F("Unable to add co2"));
         }
 
-        added=doc[F("humid")].set(sensorsLog[0].humid);
-        if(!added){
-            Serial.println(F("Unable to add humid"));
-        }
+        // added=doc[F("humid")].set(sensorsLog[0].humid);
+        // if(!added){
+        //     Serial.println(F("Unable to add humid"));
+        // }
 
-        added=doc[F("temp")].set(sensorsLog[0].temp);
-        if(!added){
-            Serial.println(F("Unable to add temp"));
-        }
+        // added=doc[F("temp")].set(sensorsLog[0].temp);
+        // if(!added){
+        //     Serial.println(F("Unable to add temp"));
+        // }
 
         added=doc[F("time")].set(sensorsLog[0].ms);
         if(!added){
@@ -75,10 +75,10 @@ String* SensorValuesLogger::getEntireLogCSV(){
         res->concat(sensorsLog[i].ms);
         res->concat(SPACE);
         res->concat(sensorsLog[i].co2);
-        res->concat(SPACE);
-        res->concat(sensorsLog[i].humid);
-        res->concat(SPACE);
-        res->concat(sensorsLog[i].temp);
+        // res->concat(SPACE);
+        // res->concat(sensorsLog[i].humid);
+        // res->concat(SPACE);
+        // res->concat(sensorsLog[i].temp);
         res->concat(F(";"));
     }
     return res;
