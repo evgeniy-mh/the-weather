@@ -61,24 +61,20 @@ export function parseLogCSV(log: string): SensorsRawInfoEntry[] {
         .filter((entry) => entry.time + entry.co2 + entry.humid + entry.temp !== 0)
 }
 
-export function sortLogByAscendingTime(log: SensorsRawInfoEntry[]): SensorsRawInfoEntry[] {
-    return log.sort((a, b) => a.time - b.time);
-}
-
-export function processTime(log: SensorsRawInfoEntry[]): SensorsInfoEntry[] {
-    const result: SensorsInfoEntry[] = [];
-
+export function convertTimeFromESPUptimeToLocalTime(log: SensorsRawInfoEntry[]): SensorsInfoEntry[] {
     const now: number = Date.now();
-    const timeMsDelta = log[1].time - log[0].time;
-    let temp = timeMsDelta;
-    for (let i = log.length - 1; i >= 0; i--) {
-        result.push({
+    let timeDelta = log[0].time - log[1].time;
+
+    const result: SensorsInfoEntry[] = [];
+    for (let i = 0; i < log.length; i++) {
+        const newValue: SensorsInfoEntry = {
             co2: log[i].co2,
             humidity: log[i].humid,
             temperature: log[i].temp,
-            time: new Date(now - temp),
-        });
-        temp += timeMsDelta;
+            time: new Date(now - timeDelta)
+        }
+        result.push(newValue);
+        timeDelta = log[0].time - log[i].time;
     }
-    return result;
+    return result.reverse();
 }

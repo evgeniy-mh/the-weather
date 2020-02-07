@@ -1,5 +1,5 @@
 import { SensorInfoAction } from './Actions';
-import { SersorsInfoLog, emptySensorsInfoLog, sortLogByAscendingTime } from './Models';
+import { SersorsInfoLog, emptySensorsInfoLog } from './Models';
 
 function sensorsInfoReducer(
     state: SersorsInfoLog = emptySensorsInfoLog,

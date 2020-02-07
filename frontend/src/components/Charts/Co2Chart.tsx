@@ -18,7 +18,7 @@ export const Co2Chart = ({ data }: Props) => {
         >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="time" />
-            <YAxis />
+            <YAxis domain={[500, 'dataMax + 210']} />
             <Tooltip />
             <Area type="monotone" dataKey="co2" stroke="#8884d8" fill="#8884d8" />
         </AreaChart>

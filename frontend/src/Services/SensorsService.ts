@@ -1,6 +1,6 @@
 import { fetchSensorInfoSuccess, fetchSensorInfoStart, fetchSensorInfoFail } from "../Actions"
 import { getServerURL } from "..";
-import { parseLogCSV, sortLogByAscendingTime, SensorsRawInfoEntry, processTime, SensorsInfoEntry } from "../Models";
+import { parseLogCSV, SensorsRawInfoEntry, convertTimeFromESPUptimeToLocalTime } from "../Models";
 
 export function connectViaWebSocket(): any {
     return async function (dispatch: any) {
@@ -49,16 +49,10 @@ export function fetchSensorFullLog(): any {
             console.log(res.statusText);
             dispatch(fetchSensorInfoFail());
         }
-        const log = await res.text();
+        const logCSV = await res.text();
 
-        const sortedAndParsedRawValues: SensorsRawInfoEntry[] = sortLogByAscendingTime(
-            parseLogCSV(log)
-        )
-
-        const valuesWithProcessedTime: SensorsInfoEntry[] = processTime(sortedAndParsedRawValues);
-
-        dispatch(
-            fetchSensorInfoSuccess(valuesWithProcessedTime)
-        )
+        const parsedLog: SensorsRawInfoEntry[] = parseLogCSV(logCSV);
+        const valuesWithProcessedTime = convertTimeFromESPUptimeToLocalTime(parsedLog);
+        dispatch(fetchSensorInfoSuccess(valuesWithProcessedTime))
     }
 }
