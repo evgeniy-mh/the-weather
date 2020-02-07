@@ -1,46 +1,39 @@
-interface FetchStatus {
-    readonly fetchStatus?: 'loading' | 'success' | 'fail';
+type DataFetchStatus = 'loading' | 'success' | 'fail';
+
+export interface Co2ValueRawLogEntry {
+    readonly co2: number;
+    readonly time: number; //esp uptime in ms
 }
 
-// export interface SensorInfo extends FetchStatus {
-//     readonly co2: number;
-//     readonly temp: number;
-//     readonly humid: number;
-//     readonly time: number;
-// }
-
-export interface SensorsRawInfoEntry {
+export interface Co2ValueLogEntry {
     readonly co2: number;
+    readonly time: Date; //user local time
+}
+
+export interface SensorRawValues extends Co2ValueRawLogEntry {
     readonly temp: number;
     readonly humid: number;
-    readonly time: number;
 }
 
-export interface SensorsInfoEntry {
-    readonly co2: number;
+export interface SensorValues extends Co2ValueLogEntry {
     readonly temperature: number;
     readonly humidity: number;
-    readonly time: Date;
 }
 
-export interface SersorsInfoLog extends FetchStatus {
-    log: SensorsInfoEntry[];
+export type SensorsData = {
+    dataFetchStatus: DataFetchStatus;
+    co2ValuesLog: Co2ValueLogEntry[];
+    temperature: number;
+    humidity: number;
 }
 
-export interface Co2ChartData {
-    readonly values: {
-        readonly co2: number,
-        readonly time: string,
-    }[]
-}
+export type AppState = Readonly<{
+    sensorsData: SensorsData
+    // settings, etc.
+}>
 
-export const emptySensorsInfoLog: SersorsInfoLog = {
-    log: []
-}
-
-// transform sensor values log in CSV form from esp
-export function parseLogCSV(log: string): SensorsRawInfoEntry[] {
-    //CSV: "time(in ms) co2 humidity temperature;"
+export function parseLogCSV(log: string): Co2ValueRawLogEntry[] {
+    //CSV format: "time(in ms) co2;"
     if (log.length === 0) {
         console.error("Error getting sensors log, string with zero length");
         return [];
@@ -50,27 +43,23 @@ export function parseLogCSV(log: string): SensorsRawInfoEntry[] {
     return entries
         .map((entry) => {
             const values: string[] = entry.split(' ');
-            const res: SensorsRawInfoEntry = {
+            const res: Co2ValueRawLogEntry = {
                 time: values[0] ? Number.parseInt(values[0]) : 0,
                 co2: values[1] ? Number.parseInt(values[1]) : 0,
-                humid: values[2] ? Number.parseInt(values[2]) : 0,
-                temp: values[3] ? Number.parseInt(values[3]) : 0,
             }
             return res;
         })
-        .filter((entry) => entry.time + entry.co2 + entry.humid + entry.temp !== 0)
+        .filter((entry) => entry.time + entry.co2 !== 0)
 }
 
-export function convertTimeFromESPUptimeToLocalTime(log: SensorsRawInfoEntry[]): SensorsInfoEntry[] {
+export function convertTimeFromESPUptimeToLocalTime(log: Co2ValueRawLogEntry[]): Co2ValueLogEntry[] {
     const now: number = Date.now();
     let timeDelta = log[0].time - log[1].time;
 
-    const result: SensorsInfoEntry[] = [];
+    const result: Co2ValueLogEntry[] = [];
     for (let i = 0; i < log.length; i++) {
-        const newValue: SensorsInfoEntry = {
+        const newValue: Co2ValueLogEntry = {
             co2: log[i].co2,
-            humidity: log[i].humid,
-            temperature: log[i].temp,
             time: new Date(now - timeDelta)
         }
         result.push(newValue);

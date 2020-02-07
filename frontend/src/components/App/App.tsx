@@ -1,14 +1,12 @@
 import * as React from "react";
 import { connect } from 'react-redux'
 import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
-import { AppState } from "../../Reducers";
-import { SensorsInfoEntry, Co2ChartData } from "../../Models";
-import { SensorsLineChart } from "../SensorsLineChart/SensorsLineChart";
 import { Co2Chart } from "../Charts/Co2Chart";
+import { SensorsData, AppState } from "../../Models";
 
 interface ComponentState {
     isDataLoaded: boolean;
-    sensorValuesLog: SensorsInfoEntry[];
+    sensorsData: SensorsData
 }
 
 interface Dispatch {
@@ -19,8 +17,10 @@ interface Dispatch {
 type Props = ComponentState & Dispatch;
 
 const mapStateToProps = (state: AppState): ComponentState => ({
-    isDataLoaded: state.sensorsLog.fetchStatus ? state.sensorsLog.fetchStatus === 'success' : false,
-    sensorValuesLog: state.sensorsLog.log,
+    isDataLoaded: state.sensorsData.dataFetchStatus
+        ? state.sensorsData.dataFetchStatus === 'success'
+        : false,
+    sensorsData: state.sensorsData,
 });
 
 const mapDispatchToProps = (dispatch: any): Dispatch => ({
@@ -40,29 +40,21 @@ class App extends React.Component<Props> {
     }
 
     render() {
-        const { sensorValuesLog, isDataLoaded } = this.props;
+        const { sensorsData, isDataLoaded } = this.props;
 
         if (isDataLoaded) {
-            // return <div>{JSON.stringify(sensorValuesLog)}</div>
             return (
                 <>
-                    <span>entries count: {sensorValuesLog.length}</span>
-                    <Co2Chart data={this.convertToCo2ChartData(sensorValuesLog)} />
+                    <h4>entries count: {sensorsData.co2ValuesLog.length}</h4>
+                    <h4>temperature: {sensorsData.temperature}</h4>
+                    <h4>humidity: {sensorsData.humidity}</h4>
+                    <Co2Chart data={sensorsData.co2ValuesLog} />
                 </>
             );
         } else {
             return 'data is loading';
         }
-    }
-
-    convertToCo2ChartData(data: SensorsInfoEntry[]): Co2ChartData {
-        return {
-            values: data.map((e) => ({
-                co2: e.co2,
-                time: `${e.time.getHours()}:${e.time.getMinutes()}:${e.time.getSeconds()}`
-            })),
-        }
-    }
+    } 
 }
 
 export const AppConnected = connect(

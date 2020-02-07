@@ -1,52 +1,62 @@
-import { SensorInfoAction } from './Actions';
-import { SersorsInfoLog, emptySensorsInfoLog } from './Models';
+import { Co2LogAction, SensorValuesAction } from './Actions';
+import { AppState, SensorsData, Co2ValueLogEntry } from './Models';
 
-function sensorsInfoReducer(
-    state: SersorsInfoLog = emptySensorsInfoLog,
-    action: SensorInfoAction
-): SersorsInfoLog {
+function sensorsDataReducer(
+    state: SensorsData,
+    action: Co2LogAction | SensorValuesAction
+): SensorsData {
     switch (action.type) {
-        case 'FETCH_SENSOR_INFO_SUCCESS':
-            let newLog = [...state.log, ...action.payload];
+        case 'FETCH_CO2_LOG_SUCCESS': {
+            console.log(action);
+            return {
+                ...state,
+                dataFetchStatus: 'success',
+                co2ValuesLog: action.payload
+            }
+        }
+        case 'NEW_SENSOR_VALUES': {
+            const newEntry: Co2ValueLogEntry = {
+                co2: action.payload.co2,
+                time: action.payload.time
+            }
 
-            // TODO: move to global constants
+            let newLog: Co2ValueLogEntry[] = [...state.co2ValuesLog, newEntry];
+
             const maxElementsCount = 50;
             if (newLog.length > maxElementsCount) {
                 newLog = newLog.slice(newLog.length - maxElementsCount);
             }
-
             return {
-                fetchStatus: 'success',
-                log: newLog
-            };
-        case 'FETCH_SENSOR_INFO_STARTED':
-            return {
-                log: state.log, fetchStatus: 'loading'
+                ...state,
+                co2ValuesLog: newLog,
+                humidity: action.payload.humidity,
+                temperature: action.payload.temperature
             }
-        case 'FETCH_SENSOR_INFO_FAIL':
-            return {
-                log: state.log, fetchStatus: 'fail'
-            }
-        default:
-            return state;
+        }
+        case 'FETCH_CO2_LOG_START':
+            return { ...state, dataFetchStatus: 'loading' }
+        case 'FETCH_CO2_LOG_FAIL':
+            return { ...state, dataFetchStatus: 'fail' }
+        default: return state;
     }
 }
 
-export type AppState = Readonly<{
-    sensorsLog: SersorsInfoLog;
-}>
-
 function createEmptyAppState(): AppState {
     return {
-        sensorsLog: emptySensorsInfoLog
+        sensorsData: {
+            co2ValuesLog: [],
+            humidity: 0,
+            temperature: 0,
+            dataFetchStatus: 'loading'
+        }
     }
 }
 
 export function AppReducer(
     state: AppState = createEmptyAppState(),
-    action: SensorInfoAction
+    action: Co2LogAction | SensorValuesAction
 ): AppState {
     return {
-        sensorsLog: sensorsInfoReducer(state.sensorsLog, action)
+        sensorsData: sensorsDataReducer(state.sensorsData, action),
     }
 }

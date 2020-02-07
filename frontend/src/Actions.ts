@@ -1,32 +1,48 @@
-import { SensorsRawInfoEntry, emptySensorsInfoLog, SensorsInfoEntry } from "./Models";
+import { Co2ValueLogEntry, SensorValues } from "./Models";
 
-export type SENSOR_INFO_ACTION =
-    'FETCH_SENSOR_INFO_STARTED'
-    | 'FETCH_SENSOR_INFO_SUCCESS'
-    | 'FETCH_SENSOR_INFO_FAIL';
+// For getting co2 log
+export type CO2_LOG_ACTION =
+    'FETCH_CO2_LOG_START'
+    | 'FETCH_CO2_LOG_FAIL'
+    | 'FETCH_CO2_LOG_SUCCESS'
 
-export interface SensorInfoAction {
-    type: SENSOR_INFO_ACTION,
-    payload: SensorsInfoEntry[],
+// For getting sensor values from web socket connection
+export type SENSOR_VALUES_ACTION = 'NEW_SENSOR_VALUES'
+
+export interface Co2LogAction {
+    type: CO2_LOG_ACTION,
+    payload: Co2ValueLogEntry[]
 }
 
-export function fetchSensorInfoStart(): SensorInfoAction {
+export function fetchCo2LogStart(): Co2LogAction {
     return {
-        type: 'FETCH_SENSOR_INFO_STARTED',
-        payload: emptySensorsInfoLog.log
+        type: 'FETCH_CO2_LOG_START',
+        payload: []
     }
 }
 
-export function fetchSensorInfoFail(): SensorInfoAction {
+export function fetchCo2LogFail(): Co2LogAction {
     return {
-        type: 'FETCH_SENSOR_INFO_FAIL',
-        payload: emptySensorsInfoLog.log,
+        type: 'FETCH_CO2_LOG_FAIL',
+        payload: []
     }
 }
 
-export function fetchSensorInfoSuccess(payload: SensorsInfoEntry[]): SensorInfoAction {
+export function fetchCo2LogSuccess(log: Co2ValueLogEntry[]): Co2LogAction {
     return {
-        type: 'FETCH_SENSOR_INFO_SUCCESS',
-        payload: payload
+        type: 'FETCH_CO2_LOG_SUCCESS',
+        payload: log,
+    }
+}
+
+export interface SensorValuesAction {
+    type: SENSOR_VALUES_ACTION,
+    payload: SensorValues;
+}
+
+export function fetchNewSensorValues(values: SensorValues): SensorValuesAction {
+    return {
+        type: 'NEW_SENSOR_VALUES',
+        payload: values
     }
 }

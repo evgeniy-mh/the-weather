@@ -1,19 +1,18 @@
-import { fetchSensorInfoSuccess, fetchSensorInfoStart, fetchSensorInfoFail } from "../Actions"
 import { getServerURL } from "..";
-import { parseLogCSV, SensorsRawInfoEntry, convertTimeFromESPUptimeToLocalTime } from "../Models";
+import { parseLogCSV, Co2ValueRawLogEntry, convertTimeFromESPUptimeToLocalTime, SensorRawValues } from "../Models";
+import { fetchCo2LogStart, fetchCo2LogFail, fetchCo2LogSuccess, fetchNewSensorValues } from "../Actions";
 
 export function connectViaWebSocket(): any {
     return async function (dispatch: any) {
         let socket = new WebSocket("ws://192.168.0.100/ws");
         socket.onmessage = function (event) {
-            const jsonObj: SensorsRawInfoEntry = JSON.parse(event.data);
-            dispatch(fetchSensorInfoSuccess([{
+            const jsonObj: SensorRawValues = JSON.parse(event.data);
+            dispatch(fetchNewSensorValues({
                 co2: jsonObj.co2,
                 temperature: jsonObj.temp,
                 humidity: jsonObj.humid,
                 time: new Date(),
-            }]))
-            console.log(jsonObj);
+            }))
         };
 
         socket.onclose = function (closeEvent) {
@@ -32,7 +31,7 @@ export function connectViaWebSocket(): any {
 
 export function fetchSensorFullLog(): any {
     return async function (dispatch: any) {
-        dispatch(fetchSensorInfoStart());
+        dispatch(fetchCo2LogStart());
 
         const res = await fetch(`${getServerURL()}/log`,
             {
@@ -47,12 +46,12 @@ export function fetchSensorFullLog(): any {
         );
         if (!res.ok) {
             console.log(res.statusText);
-            dispatch(fetchSensorInfoFail());
+            dispatch(fetchCo2LogFail());
         }
         const logCSV = await res.text();
 
-        const parsedLog: SensorsRawInfoEntry[] = parseLogCSV(logCSV);
+        const parsedLog: Co2ValueRawLogEntry[] = parseLogCSV(logCSV);
         const valuesWithProcessedTime = convertTimeFromESPUptimeToLocalTime(parsedLog);
-        dispatch(fetchSensorInfoSuccess(valuesWithProcessedTime))
+        dispatch(fetchCo2LogSuccess(valuesWithProcessedTime))
     }
 }

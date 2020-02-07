@@ -2,10 +2,10 @@ import * as React from "react";
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { SensorsInfoEntry } from "../../Models";
+import { Co2ValueLogEntry } from "../../Models";
 
 interface Props {
-    data: SensorsInfoEntry[]
+    data: Co2ValueLogEntry[]
 }
 
 export const SensorsLineChart = ({ data }: Props) => {
