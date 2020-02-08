@@ -1,5 +1,5 @@
 import { getServerURL } from "..";
-import { parseLogCSV, Co2ValueRawLogEntry, convertTimeFromESPUptimeToLocalTime, SensorRawValues } from "../Models";
+import { parseLogCSV, convertTimeFromESPUptimeToLocalTime, SensorRawValues, EspRawLog, Co2ValueLogEntry } from "../Models";
 import { fetchCo2LogStart, fetchCo2LogFail, fetchCo2LogSuccess, fetchNewSensorValues } from "../Actions";
 
 export function connectViaWebSocket(): any {
@@ -50,8 +50,9 @@ export function fetchSensorFullLog(): any {
         }
         const logCSV = await res.text();
 
-        const parsedLog: Co2ValueRawLogEntry[] = parseLogCSV(logCSV);
-        const valuesWithProcessedTime = convertTimeFromESPUptimeToLocalTime(parsedLog);
+        const parsedLog: EspRawLog = parseLogCSV(logCSV);
+        const valuesWithProcessedTime: Co2ValueLogEntry[] =
+            convertTimeFromESPUptimeToLocalTime(parsedLog);
         dispatch(fetchCo2LogSuccess(valuesWithProcessedTime))
     }
 }

@@ -62,16 +62,26 @@ String* SensorValuesLogger::getNewestEntryJSON(){
 }
 
 String* SensorValuesLogger::getEntireLogCSV(){
-    String* res=new String("");
+    /*
+        CSV log scheme:
+        _ms_int_value_; _ms_int_value_ _co2_int_value_; ...
+    */
     const String SPACE=F(" ");
-    for(int i=0;i<nOfEntries;i++){
+    const String SEMICOLON=F(";");
+
+    String* res=new String(F("")); 
+    res->concat(millis()); // add esp local time
+    res->concat(SEMICOLON);
+
+    
+    for(int i=0;i<nOfEntries;i++){ // add co2 log values
         if(sensorsLog[i].ms==0 || sensorsLog[i].co2==0){
             continue;
         }
         res->concat(sensorsLog[i].ms);
         res->concat(SPACE);
         res->concat(sensorsLog[i].co2);
-        res->concat(F(";"));
+        res->concat(SEMICOLON);
     }
     return res;
 }

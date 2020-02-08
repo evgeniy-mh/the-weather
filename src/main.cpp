@@ -6,6 +6,10 @@ SensorValuesLogger *logger;
 WeatherServer* weatherServer;
 SPIFFSConfig cfg;
 
+// 1000 = 1 sec
+const int period = 5*1000;
+unsigned long time_now = 0;
+
 void setup() {
   Serial.begin(9600);  
 
@@ -18,14 +22,11 @@ void setup() {
     Serial.println("Unable to mount SPIFFS");
   }
   
-  logger=new SensorValuesLogger(10);
+  const int numberOfLogEntries=30;
+  logger=new SensorValuesLogger(numberOfLogEntries);
   weatherServer=new WeatherServer(logger);
   weatherServer->configure();
 }
-
-// 1000 = 1 sec
-int period = 5000;
-unsigned long time_now = 0;
 
 void loop() {
   if(millis() - time_now > period){
