@@ -1,6 +1,7 @@
 import * as React from "react";
 import { CartesianGrid, AreaChart, YAxis, XAxis, Tooltip, Area } from "recharts";
 import { Co2ValueLogEntry } from "../../Models";
+import * as moment from "moment"
 
 interface Props {
     data: Co2ValueLogEntry[];
@@ -33,9 +34,10 @@ export const Co2Chart = ({ data }: Props) => {
 
 function convertToChartData(data: Co2ValueLogEntry[]): ChartData[]{
     return data.map(e=>{
+        const date=moment(e.time);
         const entry: ChartData={
             co2: e.co2,
-            time: `${e.time.getHours()}:${e.time.getMinutes()}:${e.time.getSeconds()}`
+            time: date.format('H[:]mm[:]ss'),
         }
         return entry;
     });
