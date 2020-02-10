@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
 import { Co2Chart } from "../Charts/Co2Chart";
 import { SensorsData, AppState } from "../../Models";
+import { ValueCircle } from "../Charts/ValueCircle";
 
 interface ComponentState {
     isDataLoaded: boolean;
@@ -41,20 +42,23 @@ class App extends React.Component<Props> {
 
     render() {
         const { sensorsData, isDataLoaded } = this.props;
+        const { co2ValuesLog, humidity, temperature } = sensorsData;
 
         if (isDataLoaded) {
             return (
                 <>
-                    <h4>entries count: {sensorsData.co2ValuesLog.length}</h4>
-                    <h4>temperature: {sensorsData.temperature}</h4>
-                    <h4>humidity: {sensorsData.humidity}</h4>
-                    <Co2Chart data={sensorsData.co2ValuesLog} />
+                    <h4>entries count: {co2ValuesLog.length}</h4>
+                    <h4>temperature: {temperature}</h4>
+                    <h4>humidity: {humidity}</h4>
+                    <Co2Chart data={co2ValuesLog} />
+                    <ValueCircle header={'Temperature'} value={temperature} valueUnit={'C°'} />
+                    <ValueCircle header={'Humidity'} value={humidity} valueUnit={'%'} />
                 </>
             );
         } else {
             return 'data is loading';
         }
-    } 
+    }
 }
 
 export const AppConnected = connect(
