@@ -6,9 +6,15 @@ BME280 bme280;
 int nOfEntries;
 Entry* sensorsLog;
 
+int currentTemperature=0;
+int currentHumidity=0;
+
 SensorValuesLogger::SensorValuesLogger(int numberOfLogEntries){
     co2meter.initCO2Meter();
     bme280.initBME280();
+
+    currentTemperature=bme280.readTemperature();
+    currentHumidity=bme280.readHumidity();
 
     nOfEntries=numberOfLogEntries;
     sensorsLog=new Entry[nOfEntries];
@@ -31,6 +37,9 @@ void SensorValuesLogger::logSensorValues(){
     newEntry.co2=co2meter.getCO2();
     newEntry.ms=millis();
     addLogEntry(newEntry);
+
+    currentTemperature=bme280.readTemperature();
+    currentHumidity=bme280.readHumidity();
 }
 
 String* SensorValuesLogger::getNewestEntryJSON(){
@@ -38,27 +47,35 @@ String* SensorValuesLogger::getNewestEntryJSON(){
         StaticJsonDocument<capacity>doc;
         boolean added=doc[F("co2")].set(sensorsLog[0].co2);
         if(!added){
-            Serial.println(F("Unable to add co2"));
+            // Serial.println(F("Unable to add co2"));
         }
 
-        added=doc[F("humid")].set(bme280.readHumidity());
+        added=doc[F("humid")].set(currentHumidity);
         if(!added){
-            Serial.println(F("Unable to add humid"));
+            // Serial.println(F("Unable to add humid"));
         }
 
-        added=doc[F("temp")].set(bme280.readTemperature());
+        added=doc[F("temp")].set(currentTemperature);
         if(!added){
-            Serial.println(F("Unable to add temp"));
+            // Serial.println(F("Unable to add temp"));
         }
 
         added=doc[F("time")].set(sensorsLog[0].ms);
         if(!added){
-            Serial.println(F("Unable to add time"));
+            // Serial.println(F("Unable to add time"));
         }
 
         String* output=new String(F(""));
         serializeJson(doc, *output);
         return output;
+}
+
+SensorValues SensorValuesLogger::getNewestSensorValues(){
+    SensorValues values;
+    values.co2=sensorsLog[0].co2;
+    values.temp=currentTemperature;
+    values.humid=currentHumidity;
+    return values;
 }
 
 String* SensorValuesLogger::getEntireLogCSV(){

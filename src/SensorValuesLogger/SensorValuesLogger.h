@@ -11,6 +11,12 @@ struct Entry{
     // int humid;
 };
 
+struct SensorValues{
+    int co2;
+    int temp;
+    int humid;
+};
+
 class SensorValuesLogger{
     public:
         SensorValuesLogger(int numberOfLogEntries);
@@ -18,6 +24,7 @@ class SensorValuesLogger{
         String* getEntireLogCSV();
         void logSensorValues();
         String* getNewestEntryJSON();
+        SensorValues getNewestSensorValues();
 
     private:
         void addLogEntry(Entry newEntry);

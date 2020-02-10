@@ -1,31 +1,32 @@
 #include "./WeatherServer.h"
 
 AsyncWebServer server(80);
-AsyncWebSocket ws("/ws"); // access at ws://[esp ip]/ws
+AsyncWebSocket sensorsWS("/sensors"); // access at ws://[esp ip]/sensors
+
 int WSClientCount=0;
 bool serverIsReady=false;
 
-WeatherServer::WeatherServer(SensorValuesLogger *logger){
-  this->logger=logger;
+WeatherServer::WeatherServer(){
+  appContext=AppContext::getInstance();
 }
 
-void onEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
+void onSensorsWSEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
   if(type == WS_EVT_CONNECT){
     //client connected
-    Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
+    // Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
     // client->printf("Hello Client %u :)", client->id());
     client->ping();
     WSClientCount++;
   } else if(type == WS_EVT_DISCONNECT){
     //client disconnected
-    Serial.printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
+    // Serial.printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
     WSClientCount--;
   } else if(type == WS_EVT_ERROR){
     //error was received from the other end
-    Serial.printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
+    // Serial.printf("ws[%s][%u] error(%u): %s\n", server->url(), client->id(), *((uint16_t*)arg), (char*)data);
   } else if(type == WS_EVT_PONG){
     //pong message was received (in response to a ping request maybe)
-    Serial.printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len)?(char*)data:"");
+    // Serial.printf("ws[%s][%u] pong[%u]: %s\n", server->url(), client->id(), len, (len)?(char*)data:"");
   }
 }
 
@@ -33,7 +34,7 @@ void WeatherServer::configure(){
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-        Serial.printf("WiFi Failed!\n");
+        // Serial.printf("WiFi Failed!\n");
         return;
     }
 
@@ -41,18 +42,21 @@ void WeatherServer::configure(){
       IPAddress(192,168,0,100), IPAddress(192,168,0,1), IPAddress(192,168,0,0));
 
     if(reconfigureResult){
-      Serial.println("reconfigured to use static IP");
+      // Serial.println("reconfigured to use static IP");
     }else{
-      Serial.println("reconfiguration failed");
+      // Serial.println("reconfiguration failed");
     }
 
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
+    // Serial.print("IP Address: ");
+    // Serial.println(WiFi.localIP());
 
     defineRESTRoutes();    
 
-    ws.onEvent(onEvent);
-    server.addHandler(&ws);
+    sensorsWS.onEvent(onSensorsWSEvent);
+    server.addHandler(&sensorsWS);
+
+    // debugWS.onEvent(onDebugWSEvent);
+    server.addHandler(appContext->getDebugWebSocket());
 
     DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
     server.begin();
@@ -78,7 +82,7 @@ void WeatherServer::defineRESTRoutes(){
     });
 
     server.on("/log", HTTP_GET, [this](AsyncWebServerRequest *request){
-        String* respond=this->logger->getEntireLogCSV();
+        String* respond=appContext->getSensorValuesLogger()->getEntireLogCSV();
         request->send(200, "text/plain", *respond);
         delete respond;
     });
@@ -117,15 +121,15 @@ void WeatherServer::defineRESTRoutes(){
 
 void WeatherServer::sendUpdatesToConnectedWebSocketClients(){
   if(serverIsReady && WSClientCount>0){
-    Serial.print("Clients: "); Serial.print(WSClientCount);
-    Serial.println();
+    // Serial.print("Clients: "); Serial.print(WSClientCount);
+    // Serial.println();
 
-    String* res=logger->getNewestEntryJSON();
-    ws.textAll(*res);
+    String* res=appContext->getSensorValuesLogger()->getNewestEntryJSON();
+    sensorsWS.textAll(*res);
     delete res;
 
     if(WSClientCount>DEFAULT_MAX_WS_CLIENTS){
-      ws.cleanupClients();
+      sensorsWS.cleanupClients();
     }
   }    
 }

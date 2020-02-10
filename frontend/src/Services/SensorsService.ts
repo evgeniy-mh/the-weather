@@ -4,7 +4,7 @@ import { fetchCo2LogStart, fetchCo2LogFail, fetchCo2LogSuccess, fetchNewSensorVa
 
 export function connectViaWebSocket(): any {
     return async function (dispatch: any) {
-        let socket = new WebSocket("ws://192.168.0.100/ws");
+        let socket = new WebSocket("ws://192.168.0.100/sensors");
         socket.onmessage = function (event) {
             const jsonObj: SensorRawValues = JSON.parse(event.data);
             dispatch(fetchNewSensorValues({

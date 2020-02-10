@@ -2,7 +2,8 @@
 #include "./WeatherServer/WeatherServer.h"
 #include "./SensorValuesLogger/SensorValuesLogger.h"
 
-SensorValuesLogger *logger;
+SensorValuesLogger* logger;
+AppContext* appContext;
 WeatherServer* weatherServer;
 SPIFFSConfig cfg;
 
@@ -11,27 +12,26 @@ const int period = 5*1000;
 unsigned long time_now = 0;
 
 void setup() {
-  Serial.begin(9600);  
-
   cfg.setAutoFormat(false);
   SPIFFS.setConfig(cfg);
 
   if (SPIFFS.begin()) {
-    Serial.println("Mounted SPIFFS");
+    // Serial.println("Mounted SPIFFS");
   } else {
-    Serial.println("Unable to mount SPIFFS");
+    // Serial.println("Unable to mount SPIFFS");
   }
   
-  const int numberOfLogEntries=30;
-  logger=new SensorValuesLogger(numberOfLogEntries);
-  weatherServer=new WeatherServer(logger);
+  appContext=AppContext::getInstance();
+  
+  weatherServer=new WeatherServer();
   weatherServer->configure();
 }
 
 void loop() {
   if(millis() - time_now > period){
         time_now = millis();        
-        logger->logSensorValues();
+        appContext->getSensorValuesLogger()->logSensorValues();
+        appContext->displayInfoOnLCD128x64();
         weatherServer->sendUpdatesToConnectedWebSocketClients();
 
         // Serial.print(F("Heap spce:")); Serial.print(ESP.getFreeHeap());

@@ -13,17 +13,17 @@
 #include "ArduinoJson.h"
 
 #include <FS.h>
-#include "../SensorValuesLogger/SensorValuesLogger.h"
+#include "../AppContext/AppContext.h"
 
 class WeatherServer{
     public:
         const char* ssid = "dlink";
         const char* password = "768513783";
-        WeatherServer(SensorValuesLogger* logger);
+        WeatherServer();
         void configure();
         void sendUpdatesToConnectedWebSocketClients();
 
     private:
-        SensorValuesLogger *logger;
+        AppContext* appContext;
         void defineRESTRoutes();
 };
