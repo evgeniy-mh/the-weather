@@ -3,6 +3,7 @@ import { CartesianGrid, AreaChart, YAxis, XAxis, Tooltip, Area, ResponsiveContai
 import { Co2ValueLogEntry } from "../../Models";
 
 import './Co2Chart.css';
+import { StatusBadge, BadgeStatus } from "../StatusBadge/StatusBadge";
 
 interface Props {
     data: Co2ValueLogEntry[];
@@ -14,10 +15,17 @@ export interface ChartData {
 }
 
 export const Co2Chart = ({ data }: Props) => {
+
+    const lastPPMValue = data[data.length - 1]?.co2;
+
     return (
         <div className='co2-chart-container'>
             <h2 className='co2-chart-header'>
                 CO2 Chart
+                <StatusBadge
+                    text={`${lastPPMValue} ppm`}
+                    status={getCo2BadgeStatus(lastPPMValue)}
+                />
             </h2>
             <ResponsiveContainer width="100%" height={300}>
                 <AreaChart
@@ -65,4 +73,14 @@ function convertToChartData(data: Co2ValueLogEntry[]): ChartData[] {
         }
         return entry;
     });
+}
+
+function getCo2BadgeStatus(level: number): BadgeStatus {
+    if (level > 1500) {
+        return BadgeStatus.danger;
+    } else if (level > 1000) {
+        return BadgeStatus.warning;
+    } else {
+        return BadgeStatus.normal;
+    }
 }

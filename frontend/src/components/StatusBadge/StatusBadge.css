@@ -1,0 +1,18 @@
+.status-badge {
+    margin: 25px;
+    padding: 5px;
+    border-radius: 30px;
+}
+
+
+.normal{
+    background-color: #5aa547;
+}
+
+.warning{
+    background-color: #ffa552;
+}
+
+.danger {
+    background-color: red;
+}

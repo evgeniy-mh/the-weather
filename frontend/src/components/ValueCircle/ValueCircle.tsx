@@ -3,7 +3,6 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 import './ValueCircle.css'
-import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface Props {
     header: string;

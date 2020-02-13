@@ -1,12 +1,11 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { connect, useStore } from 'react-redux'
+import { connect } from 'react-redux'
 import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
 import { Co2Chart } from "../CO2Chart/Co2Chart";
 import { SensorsData, AppState } from "../../Models";
 import { ValueCircle } from "../ValueCircle/ValueCircle";
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
 import './AppTest.css';
