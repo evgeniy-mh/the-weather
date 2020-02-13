@@ -4,6 +4,7 @@ import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsS
 import { Co2Chart } from "../CO2Chart/Co2Chart";
 import { SensorsData, AppState } from "../../Models";
 import { ValueCircle } from "../ValueCircle/ValueCircle";
+import { createStyles } from "@material-ui/core";
 
 interface ComponentState {
     isDataLoaded: boolean;

@@ -1,8 +1,17 @@
-.circle-container{
-    width: 100px;
-    height: 100px;
+.value-circle-container{    
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
-.circle-header{
-    margin-bottom: 10px;
+.value-circle-header{
+    margin: 0;
+    padding-right: 1em;
+}
+
+.CircularProgressbar {
+    width: 100px;
+    height: 100px;
 }

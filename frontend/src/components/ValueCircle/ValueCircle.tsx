@@ -3,6 +3,7 @@ import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 
 import './ValueCircle.css'
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 interface Props {
     header: string;
@@ -12,8 +13,9 @@ interface Props {
 
 export const ValueCircle = ({ header, value, valueUnit }: Props) => {
     return (
-        <div className='circle-container'>
-            <h4 className='circle-header'>{header}</h4>
+        <div className='value-circle-container'>
+            <h2 className='value-circle-header'>{header}</h2>
+            {/* <CircularProgress variant="static" value={55} /> */}
             <CircularProgressbar value={value} text={value + valueUnit} />
         </div>
     );
