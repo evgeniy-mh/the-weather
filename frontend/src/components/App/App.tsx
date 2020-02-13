@@ -1,9 +1,9 @@
 import * as React from "react";
 import { connect } from 'react-redux'
 import { connectViaWebSocket, fetchSensorFullLog } from "../../Services/SensorsService";
-import { Co2Chart } from "../Charts/Co2Chart";
+import { Co2Chart } from "../CO2Chart/Co2Chart";
 import { SensorsData, AppState } from "../../Models";
-import { ValueCircle } from "../Charts/ValueCircle";
+import { ValueCircle } from "../ValueCircle/ValueCircle";
 
 interface ComponentState {
     isDataLoaded: boolean;
@@ -48,8 +48,6 @@ class App extends React.Component<Props> {
             return (
                 <>
                     <h4>entries count: {co2ValuesLog.length}</h4>
-                    <h4>temperature: {temperature}</h4>
-                    <h4>humidity: {humidity}</h4>
                     <Co2Chart data={co2ValuesLog} />
                     <ValueCircle header={'Temperature'} value={temperature} valueUnit={'C°'} />
                     <ValueCircle header={'Humidity'} value={humidity} valueUnit={'%'} />
