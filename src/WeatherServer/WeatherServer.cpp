@@ -110,6 +110,17 @@ void WeatherServer::defineRESTRoutes(){
         request->send(200, "application/json", output);
     });
 
+    server.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request){
+        const int capacity=JSON_OBJECT_SIZE(5);
+        StaticJsonDocument<capacity>doc;
+        doc[F("maxEntriesCount")]=appContext->getLogEntriesCount();
+        doc[F("logMsInterval")]=appContext->getLogMsInterval();
+
+        String output="";
+        serializeJson(doc, output);
+        request->send(200, "application/json", output);
+    });
+
     server.onNotFound([](AsyncWebServerRequest *request) {
       if (request->method() == HTTP_OPTIONS) {
         request->send(200);

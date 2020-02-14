@@ -22,7 +22,10 @@ void onDebugWSEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsE
 }
 
 AppContext::AppContext(){
-    sensorValuesLogger=new SensorValuesLogger(50);
+    // TODO
+    logEntriesCount=200;
+
+    sensorValuesLogger=new SensorValuesLogger(logEntriesCount);
     debugWS=new AsyncWebSocket(F("/debug"));
     debugWS->onEvent(onDebugWSEvent);
     lcd128x64=new LCD128x64();
@@ -52,4 +55,17 @@ void AppContext::displayInfoOnLCD128x64(){
         currentValues.temp,
         currentValues.humid
     );
+}
+
+int AppContext::getLogEntriesCount(){
+    return logEntriesCount;
+}
+
+int AppContext::getLogMsInterval(){
+    return logMsInterval;
+}
+
+void AppContext::setLogMsInterval(int interval){
+    logMsInterval=interval;
+    // TODO
 }

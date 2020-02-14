@@ -7,8 +7,6 @@ AppContext* appContext;
 WeatherServer* weatherServer;
 SPIFFSConfig cfg;
 
-// 1000 = 1 sec
-const int period = 5*1000;
 unsigned long time_now = 0;
 
 void setup() {
@@ -22,13 +20,17 @@ void setup() {
   }
   
   appContext=AppContext::getInstance();
+
+  // 1000 = 1 sec
+  const int logMsInterval = 10*1000;
+  appContext->setLogMsInterval(logMsInterval);
   
   weatherServer=new WeatherServer();
   weatherServer->configure();
 }
 
 void loop() {
-  if(millis() - time_now > period){
+  if(millis() - time_now > appContext->getLogMsInterval()){
         time_now = millis();        
         appContext->getSensorValuesLogger()->logSensorValues();
         appContext->displayInfoOnLCD128x64();
