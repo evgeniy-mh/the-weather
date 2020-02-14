@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include "./WeatherServer/WeatherServer.h"
 #include "./SensorValuesLogger/SensorValuesLogger.h"
+#include "./PersistantSettingsService/PersistantSettingsService.h"
 
 SensorValuesLogger* logger;
 AppContext* appContext;
+EspSettings appSettings;
 WeatherServer* weatherServer;
 SPIFFSConfig cfg;
 
@@ -21,16 +23,15 @@ void setup() {
   
   appContext=AppContext::getInstance();
 
-  // 1000 = 1 sec
-  const int logMsInterval = 10*1000;
-  appContext->setLogMsInterval(logMsInterval);
+  PersistantSettingsService* settingsService=PersistantSettingsService::getInstance();
+  appSettings=settingsService->getSettings();
   
   weatherServer=new WeatherServer();
   weatherServer->configure();
 }
 
 void loop() {
-  if(millis() - time_now > appContext->getLogMsInterval()){
+  if(millis() - time_now > appSettings.logMsInterval){
         time_now = millis();        
         appContext->getSensorValuesLogger()->logSensorValues();
         appContext->displayInfoOnLCD128x64();

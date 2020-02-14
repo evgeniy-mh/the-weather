@@ -1,6 +1,7 @@
 #pragma once
 
 #include <ESPAsyncWebServer.h>
+#include "./PersistantSettingsService/PersistantSettingsService.h"
 #include "./SensorValuesLogger/SensorValuesLogger.h"
 #include "./LCD128x64/LCD128x64.h"
 
@@ -9,8 +10,7 @@ class AppContext{
         static AppContext* instance;
         AppContext();
 
-        int logEntriesCount;
-        int logMsInterval;
+        PersistantSettingsService* appSettings;
         SensorValuesLogger* sensorValuesLogger;
         AsyncWebSocket* debugWS;
         LCD128x64* lcd128x64;
@@ -22,8 +22,4 @@ class AppContext{
       LCD128x64* getLCD128x64(); 
       void sendDebugMessage(char* mes);
       void displayInfoOnLCD128x64();
-
-      int getLogEntriesCount();
-      int getLogMsInterval();
-      void setLogMsInterval(int interval);
 };

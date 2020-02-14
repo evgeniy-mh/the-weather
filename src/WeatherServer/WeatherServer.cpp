@@ -8,6 +8,7 @@ bool serverIsReady=false;
 
 WeatherServer::WeatherServer(){
   appContext=AppContext::getInstance();
+  appSettings=PersistantSettingsService::getInstance();
 }
 
 void onSensorsWSEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
@@ -111,14 +112,34 @@ void WeatherServer::defineRESTRoutes(){
     });
 
     server.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request){
+        EspSettings settings=appSettings->getSettings();
+
         const int capacity=JSON_OBJECT_SIZE(5);
         StaticJsonDocument<capacity>doc;
-        doc[F("maxEntriesCount")]=appContext->getLogEntriesCount();
-        doc[F("logMsInterval")]=appContext->getLogMsInterval();
+        doc[F("logEntriesCount")]=settings.logEntriesCount;
+        doc[F("logMsInterval")]=settings.logMsInterval;
 
         String output="";
         serializeJson(doc, output);
         request->send(200, "application/json", output);
+    });
+
+    server.on("/settings", HTTP_POST, [this](AsyncWebServerRequest *request){
+        if(request->hasParam("setLogMsInterval", true)){
+          AsyncWebParameter* newLogMsInterval = request->getParam("setLogMsInterval", true);
+          Serial.println(newLogMsInterval->value());
+        }else{
+          request->send(500, "application/text", "error setLogMsInterval");
+        }
+
+        if(request->hasParam("setLogEntriesCount", true)){
+          AsyncWebParameter* newLogEntriesCount = request->getParam("setLogEntriesCount", true);
+          Serial.println(newLogEntriesCount->value());
+        }else{
+          request->send(500, "application/text", "error setLogEntriesCount");
+        }
+
+        request->send(200, "application/text", "ok");
     });
 
     server.onNotFound([](AsyncWebServerRequest *request) {

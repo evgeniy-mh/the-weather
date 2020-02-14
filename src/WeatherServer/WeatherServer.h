@@ -13,6 +13,7 @@
 
 #include <FS.h>
 #include "../AppContext/AppContext.h"
+#include "./PersistantSettingsService/PersistantSettingsService.h"
 
 class WeatherServer{
     public:
@@ -24,5 +25,6 @@ class WeatherServer{
 
     private:
         AppContext* appContext;
+        PersistantSettingsService* appSettings;
         void defineRESTRoutes();
 };
