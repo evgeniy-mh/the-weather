@@ -25,6 +25,6 @@ class WeatherServer{
 
     private:
         AppContext* appContext;
-        PersistantSettingsService* appSettings;
+        PersistantSettingsService* appSettingsService;
         void defineRESTRoutes();
 };

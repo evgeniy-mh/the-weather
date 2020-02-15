@@ -8,7 +8,7 @@ bool serverIsReady=false;
 
 WeatherServer::WeatherServer(){
   appContext=AppContext::getInstance();
-  appSettings=PersistantSettingsService::getInstance();
+  appSettingsService=PersistantSettingsService::getInstance();
 }
 
 void onSensorsWSEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
@@ -112,7 +112,7 @@ void WeatherServer::defineRESTRoutes(){
     });
 
     server.on("/settings", HTTP_GET, [this](AsyncWebServerRequest *request){
-        EspSettings settings=appSettings->getSettings();
+        EspSettings settings=appSettingsService->getSettings();
 
         const int capacity=JSON_OBJECT_SIZE(5);
         StaticJsonDocument<capacity>doc;
@@ -125,21 +125,28 @@ void WeatherServer::defineRESTRoutes(){
     });
 
     server.on("/settings", HTTP_POST, [this](AsyncWebServerRequest *request){
-        if(request->hasParam("setLogMsInterval", true)){
-          AsyncWebParameter* newLogMsInterval = request->getParam("setLogMsInterval", true);
-          Serial.println(newLogMsInterval->value());
-        }else{
-          request->send(500, "application/text", "error setLogMsInterval");
-        }
+        if(request->hasParam("setLogMsInterval", true)
+        && request->hasParam("setLogEntriesCount", true)){
+            AsyncWebParameter* newLogMsInterval = request->getParam("setLogMsInterval", true);
+            AsyncWebParameter* newLogEntriesCount = request->getParam("setLogEntriesCount", true);
 
-        if(request->hasParam("setLogEntriesCount", true)){
-          AsyncWebParameter* newLogEntriesCount = request->getParam("setLogEntriesCount", true);
-          Serial.println(newLogEntriesCount->value());
-        }else{
-          request->send(500, "application/text", "error setLogEntriesCount");
-        }
+            EspSettings newSettings;
+            newSettings.logEntriesCount=newLogEntriesCount->value().toInt();
+            newSettings.logMsInterval=newLogMsInterval->value().toInt();
 
-        request->send(200, "application/text", "ok");
+            if(appSettingsService->areSettingsValid(newSettings)){
+              appSettingsService->setSettings(newSettings);
+              if(appSettingsService->writeSettingsToFile()){
+                request->send(200);
+              }else{
+                request->send(500, "application/text", "unable to write settings to file");
+              }
+            }else{
+              request->send(500, "application/text", "invalid settings");
+            }
+        }else{
+          request->send(500, "application/text", "invalid post params");
+        }
     });
 
     server.onNotFound([](AsyncWebServerRequest *request) {

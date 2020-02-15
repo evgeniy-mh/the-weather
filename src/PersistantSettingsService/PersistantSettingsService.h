@@ -19,12 +19,13 @@ class PersistantSettingsService{
         PersistantSettingsService();
 
         EspSettings settings;
-        void writeSettingsToFile(EspSettings settings);
         EspSettings readSettingsFile();
 
     public:
         static PersistantSettingsService* getInstance();   
 
         EspSettings getSettings();
+        bool areSettingsValid(EspSettings newSettings);
         void setSettings(EspSettings newSettings);
+        bool writeSettingsToFile();
 };

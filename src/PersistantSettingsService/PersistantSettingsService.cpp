@@ -10,25 +10,30 @@ PersistantSettingsService* PersistantSettingsService::getInstance(){
 }
 
 PersistantSettingsService::PersistantSettingsService(){
-    Serial.begin(9600);        
     if(SPIFFS.exists(settingsFileName)){
         Serial.println("Will read from settings file");
         settings=readSettingsFile();
     }else{
-        // write default settings
-        settings.logMsInterval=10000; //10 secongs
-        settings.logEntriesCount=200;
-        writeSettingsToFile(settings);
-
-        Serial.println("writeSettingsToFile");
+        // write default settings        
+        EspSettings defaultSettings;
+        defaultSettings.logMsInterval=defaultLogMsInterval;
+        defaultSettings.logEntriesCount=defaultLogEntriesCount;
+        setSettings(defaultSettings);
+        writeSettingsToFile();
+        Serial.println("using default settings");
     }
 }
 
-void PersistantSettingsService::writeSettingsToFile(EspSettings settings){
+void PersistantSettingsService::setSettings(EspSettings newSettings){
+    settings.logMsInterval=newSettings.logMsInterval;
+    settings.logEntriesCount=newSettings.logEntriesCount;
+}
+
+bool PersistantSettingsService::writeSettingsToFile(){
     File settingsFile=SPIFFS.open(settingsFileName,"w");
 
     if(!settingsFile){
-        //TODO
+        return false;
     }
     
     const int capacity=JSON_OBJECT_SIZE(5);
@@ -38,10 +43,13 @@ void PersistantSettingsService::writeSettingsToFile(EspSettings settings){
     String output="";
     serializeJson(doc, output);
 
+    if(output.isEmpty()){
+        return false;
+    }
+
     settingsFile.print(output);
     settingsFile.close();
-
-    Serial.println(output);
+    return true;
 }
 
 EspSettings PersistantSettingsService::readSettingsFile(){
@@ -93,4 +101,11 @@ EspSettings PersistantSettingsService::readSettingsFile(){
 
 EspSettings PersistantSettingsService::getSettings(){
     return settings;
+}
+
+bool PersistantSettingsService::areSettingsValid(EspSettings newSettings){
+       return 
+            newSettings.logEntriesCount>1 
+            && newSettings.logEntriesCount<500
+            && newSettings.logMsInterval>5000;
 }
