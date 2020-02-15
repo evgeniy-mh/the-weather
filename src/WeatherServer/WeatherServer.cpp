@@ -13,11 +13,12 @@ WeatherServer::WeatherServer(){
 
 void onSensorsWSEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len){
   if(type == WS_EVT_CONNECT){
-    //client connected
-    // Serial.printf("ws[%s][%u] connect\n", server->url(), client->id());
-    // client->printf("Hello Client %u :)", client->id());
-    client->ping();
+    //new client connected
     WSClientCount++;
+
+    String* res=AppContext::getInstance()->getSensorValuesLogger()->getNewestEntryJSON();
+    client->text(*res);
+    delete res;
   } else if(type == WS_EVT_DISCONNECT){
     //client disconnected
     // Serial.printf("ws[%s][%u] disconnect: %u\n", server->url(), client->id());
