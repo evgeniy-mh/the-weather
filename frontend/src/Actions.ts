@@ -9,6 +9,8 @@ export type CO2_LOG_ACTION =
 // For getting sensor values from web socket connection
 export type SENSOR_VALUES_ACTION = 'NEW_SENSOR_VALUES'
 
+export type SETTINGS_DRAWER_ACTION = 'OPEN_SETTINGS' | 'CLOSE_SETTINGS'
+
 export interface Co2LogAction {
     type: CO2_LOG_ACTION,
     payload: Co2ValueLogEntry[]
@@ -44,5 +46,21 @@ export function fetchNewSensorValues(values: SensorValues): SensorValuesAction {
     return {
         type: 'NEW_SENSOR_VALUES',
         payload: values
+    }
+}
+
+export interface SettingsDrawerAction {
+    type: SETTINGS_DRAWER_ACTION
+}
+
+export function openSettingsDrawer(): SettingsDrawerAction {
+    return {
+        type: 'OPEN_SETTINGS'
+    }
+}
+
+export function closeSettingsDrawer(): SettingsDrawerAction {
+    return {
+        type: 'CLOSE_SETTINGS'
     }
 }

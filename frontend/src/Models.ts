@@ -35,6 +35,7 @@ export type SensorsData = {
 }
 
 export type AppState = Readonly<{
+    settingsDrawerOpened: boolean,
     sensorsData: SensorsData
     // settings, etc.
 }>

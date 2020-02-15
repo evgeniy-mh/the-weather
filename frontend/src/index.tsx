@@ -8,6 +8,7 @@ import { AppConnected } from "./components/App/App";
 import { AppReducer } from "./Reducers";
 import { AppTestConnected } from "./components/App/AppTest";
 import WeatherAppBar from "./components/WeatherAppBar/WeatherAppBar";
+import { SettingsDrawer } from "./components/SettingsDrawer/SettingsDrawer";
 
 // true - frontend server on localhost, esp server on esp device
 // false - frontend server on esp device, esp server on esp device
@@ -26,6 +27,7 @@ ReactDOM.render(
     <Provider store={store}>
         {/* <AppConnected /> */}
         <WeatherAppBar/>
+        <SettingsDrawer />
         <AppTestConnected />
     </Provider>,
     document.getElementById("root")
