@@ -22,7 +22,7 @@ function sensorsDataReducer(
 
             let newLog: Co2ValueLogEntry[] = [...state.co2ValuesLog, newEntry];
 
-            const maxElementsCount = 50;
+            const maxElementsCount = 200;
             if (newLog.length > maxElementsCount) {
                 newLog = newLog.slice(newLog.length - maxElementsCount);
             }

@@ -65,6 +65,7 @@ const AppTest = ({ fetchSensorFullLog, connectViaWebSocket, sensorsData }: Props
         <div className={classes.root}>
             <Grid container spacing={3} alignContent='center'>
                 <Grid item xs={12}>
+                    <h4>entries count: {sensorsData.co2ValuesLog.length}</h4>
                     <Co2Chart data={sensorsData.co2ValuesLog} />
                 </Grid>
                 <Grid item xs={12} sm={6}>
