@@ -2,13 +2,13 @@ import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState, ESPSettings } from '../../Models';
 import { closeSettingsDrawer } from '../../Actions';
-import { LogIntervalSelector } from '../LogIntervalSelector/LogIntervalSelector';
 import Drawer from '@material-ui/core/Drawer/Drawer';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 
 import "./SettingsDrawer.css"
+import { LogDurationSelector } from '../LogDurationSelector/LogDurationSelector';
 
 export function SettingsDrawer() {
     const isOpened: boolean = useSelector((state: AppState) => state.settingsDrawerOpened);
@@ -20,8 +20,7 @@ export function SettingsDrawer() {
         [dispatch]
     );
 
-    // const [espLogInterval, setEspLogInterval] = React.useState<number>(espSettings.logInterval);
-    const [espLogInterval, setEspLogInterval] = React.useState<number>(7000);
+    const [logHourDuration, setLogHourDuration] = React.useState<number>(5);
 
     const useStyles = makeStyles({
         drawerPaper: {
@@ -43,11 +42,9 @@ export function SettingsDrawer() {
             <div className='settings-container'>
                 <List>
                     <ListItem>
-                        <LogIntervalSelector
-                            initialTimeValueMs={espLogInterval}
-                            // logEntriesCount={espSettings.maxStoredLogEntries}
-                            logEntriesCount={200}
-                            onChange={(value) => { setEspLogInterval(value) }}
+                        <LogDurationSelector
+                            timeDurationHourValue={logHourDuration}
+                            onChange={value => { setLogHourDuration(value) }}
                         />
                     </ListItem>
                 </List>
