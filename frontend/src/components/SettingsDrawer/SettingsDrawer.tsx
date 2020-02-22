@@ -9,12 +9,18 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import "./SettingsDrawer.css"
 import { LogDurationSelector } from '../LogDurationSelector/LogDurationSelector';
 import { closeSettingsDrawer } from '../../Actions/SettingsDrawerActions';
+import { fetchEspSettings } from '../../Services/EspSettingsService';
 
 export function SettingsDrawer() {
     const isOpened: boolean = useSelector((state: AppState) => state.settingsDrawerOpened);
-    const espSettings: ESPSettings = useSelector((state: AppState) => state.espSettings);
+    // const espSettings: ESPSettings = useSelector((state: AppState) => state.espSettings);
 
     const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        dispatch(fetchEspSettings())
+    }, [])
+
     const closeSettings = React.useCallback(
         () => dispatch(closeSettingsDrawer()),
         [dispatch]

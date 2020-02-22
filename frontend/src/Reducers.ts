@@ -74,7 +74,7 @@ function createEmptyAppState(): AppState {
             dataFetchStatus: 'loading'
         },
         espSettings: {
-            logInterval: 0,
+            logEntriesCreationIntervalMs: 0,
             maxStoredLogEntries: 0
         }
     }

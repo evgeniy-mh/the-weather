@@ -36,7 +36,8 @@ export type SensorsData = {
 
 export type ESPSettings={
     maxStoredLogEntries: number,
-    logInterval: number, // time interval in ms
+    logEntriesCreationIntervalMs: number, // time interval in ms
+    calculatedLogIntervalHours?:number
 }
 
 export type AppState = Readonly<{
