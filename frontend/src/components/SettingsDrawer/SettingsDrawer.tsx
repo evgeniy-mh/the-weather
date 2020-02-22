@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { AppState, ESPSettings } from '../../Models';
-import { closeSettingsDrawer } from '../../Actions';
 import Drawer from '@material-ui/core/Drawer/Drawer';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
@@ -9,6 +8,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 
 import "./SettingsDrawer.css"
 import { LogDurationSelector } from '../LogDurationSelector/LogDurationSelector';
+import { closeSettingsDrawer } from '../../Actions/SettingsDrawerActions';
 
 export function SettingsDrawer() {
     const isOpened: boolean = useSelector((state: AppState) => state.settingsDrawerOpened);

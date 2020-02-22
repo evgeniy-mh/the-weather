@@ -1,6 +1,17 @@
 import { getServerURL } from "..";
-import { parseLogCSV, convertTimeFromESPUptimeToLocalTime, SensorRawValues, EspRawLog, Co2ValueLogEntry } from "../Models";
-import { fetchCo2LogStart, fetchCo2LogFail, fetchCo2LogSuccess, fetchNewSensorValues } from "../Actions";
+import {
+    parseLogCSV,
+    convertTimeFromESPUptimeToLocalTime,
+    SensorRawValues,
+    EspRawLog,
+    Co2ValueLogEntry
+} from "../Models";
+import { fetchNewSensorValues } from "../Actions/SensorValuesActions";
+import {
+    fetchCo2LogStart,
+    fetchCo2LogFail,
+    fetchCo2LogSuccess
+} from "../Actions/Co2LogActions";
 
 export function connectViaWebSocket(): any {
     return async function (dispatch: any) {

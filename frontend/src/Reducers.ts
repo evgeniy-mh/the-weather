@@ -1,5 +1,7 @@
-import { Co2LogAction, SensorValuesAction, SettingsDrawerAction } from './Actions';
 import { AppState, SensorsData, Co2ValueLogEntry, ESPSettings } from './Models';
+import { SettingsDrawerAction } from './Actions/SettingsDrawerActions';
+import { Co2LogAction } from './Actions/Co2LogActions';
+import { SensorValuesAction } from './Actions/SensorValuesActions';
 
 function settingsDrawerReducer(
     state: boolean,

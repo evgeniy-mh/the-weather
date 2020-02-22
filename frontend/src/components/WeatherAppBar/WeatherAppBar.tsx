@@ -8,7 +8,7 @@ import FilterVintage from '@material-ui/icons/FilterVintage';
 import Settings from '@material-ui/icons/Settings';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { useDispatch } from 'react-redux';
-import { openSettingsDrawer } from '../../Actions';
+import { openSettingsDrawer } from '../../Actions/SettingsDrawerActions';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
