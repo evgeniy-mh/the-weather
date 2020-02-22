@@ -1,11 +1,11 @@
 import { Co2LogAction, SensorValuesAction, SettingsDrawerAction } from './Actions';
-import { AppState, SensorsData, Co2ValueLogEntry } from './Models';
+import { AppState, SensorsData, Co2ValueLogEntry, ESPSettings } from './Models';
 
 function settingsDrawerReducer(
     state: boolean,
     action: SettingsDrawerAction
 ): boolean {
-    switch(action.type){
+    switch (action.type) {
         case "OPEN_SETTINGS":
             return true;
         case "CLOSE_SETTINGS":
@@ -54,6 +54,14 @@ function sensorsDataReducer(
     }
 }
 
+function espSettingsReducer(
+    state: ESPSettings,
+    action: any // TODO
+): ESPSettings {
+
+    return state;
+}
+
 function createEmptyAppState(): AppState {
     return {
         settingsDrawerOpened: false,
@@ -62,6 +70,10 @@ function createEmptyAppState(): AppState {
             humidity: 0,
             temperature: 0,
             dataFetchStatus: 'loading'
+        },
+        espSettings: {
+            logInterval: 0,
+            maxStoredLogEntries: 0
         }
     }
 }
@@ -73,5 +85,6 @@ export function AppReducer(
     return {
         settingsDrawerOpened: settingsDrawerReducer(state.settingsDrawerOpened, action),
         sensorsData: sensorsDataReducer(state.sensorsData, action),
+        espSettings: espSettingsReducer(state.espSettings, action),
     }
 }

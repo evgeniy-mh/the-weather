@@ -34,10 +34,15 @@ export type SensorsData = {
     humidity: number;
 }
 
+export type ESPSettings={
+    maxStoredLogEntries: number,
+    logInterval: number, // time interval in ms
+}
+
 export type AppState = Readonly<{
     settingsDrawerOpened: boolean,
-    sensorsData: SensorsData
-    // settings, etc.
+    sensorsData: SensorsData,
+    espSettings:ESPSettings,
 }>
 
 export function parseLogCSV(log: string): EspRawLog {

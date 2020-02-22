@@ -1,13 +1,18 @@
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { AppState } from '../../Models';
-import { Drawer, List, ListItem, Slider, makeStyles } from '@material-ui/core';
+import { AppState, ESPSettings } from '../../Models';
 import { closeSettingsDrawer } from '../../Actions';
+import { LogIntervalSelector } from '../LogIntervalSelector/LogIntervalSelector';
+import Drawer from '@material-ui/core/Drawer/Drawer';
+import List from '@material-ui/core/List/List';
+import ListItem from '@material-ui/core/ListItem/ListItem';
+import makeStyles from '@material-ui/core/styles/makeStyles';
 
 import "./SettingsDrawer.css"
 
-export const SettingsDrawer = () => {
-    const isOpened = useSelector((state: AppState) => state.settingsDrawerOpened);
+export function SettingsDrawer() {
+    const isOpened: boolean = useSelector((state: AppState) => state.settingsDrawerOpened);
+    const espSettings: ESPSettings = useSelector((state: AppState) => state.espSettings);
 
     const dispatch = useDispatch();
     const closeSettings = React.useCallback(
@@ -15,13 +20,15 @@ export const SettingsDrawer = () => {
         [dispatch]
     );
 
+    // const [espLogInterval, setEspLogInterval] = React.useState<number>(espSettings.logInterval);
+    const [espLogInterval, setEspLogInterval] = React.useState<number>(7000);
+
     const useStyles = makeStyles({
         drawerPaper: {
             width: '30%',
             minWidth: '150px'
         },
     });
-
     const classes = useStyles();
 
     return (
@@ -36,12 +43,11 @@ export const SettingsDrawer = () => {
             <div className='settings-container'>
                 <List>
                     <ListItem>
-                        <Slider
-                            value={50}
-                            // onChange={handleSliderChange}
-                            aria-labelledby="input-slider"
-                            max={100}
-                            min={0}
+                        <LogIntervalSelector
+                            initialTimeValueMs={espLogInterval}
+                            // logEntriesCount={espSettings.maxStoredLogEntries}
+                            logEntriesCount={200}
+                            onChange={(value) => { setEspLogInterval(value) }}
                         />
                     </ListItem>
                 </List>
