@@ -55,15 +55,17 @@ export function fetchSensorFullLog(): any {
                 }
             }
         );
-        if (!res.ok) {
+
+        if (res.ok) {
+            const logCSV = await res.text();
+
+            const parsedLog: EspRawLog = parseLogCSV(logCSV);
+            const valuesWithProcessedTime: Co2ValueLogEntry[] =
+                convertTimeFromESPUptimeToLocalTime(parsedLog);
+            dispatch(fetchCo2LogSuccess(valuesWithProcessedTime))
+        } else {
             console.log(res.statusText);
             dispatch(fetchCo2LogFail());
         }
-        const logCSV = await res.text();
-
-        const parsedLog: EspRawLog = parseLogCSV(logCSV);
-        const valuesWithProcessedTime: Co2ValueLogEntry[] =
-            convertTimeFromESPUptimeToLocalTime(parsedLog);
-        dispatch(fetchCo2LogSuccess(valuesWithProcessedTime))
     }
 }

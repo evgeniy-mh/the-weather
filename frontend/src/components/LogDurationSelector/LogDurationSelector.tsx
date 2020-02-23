@@ -32,16 +32,3 @@ export function LogDurationSelector({ timeDurationHourValue, onChange }: Props) 
         </div>
     );
 }
-
-// 1-24 hours
-function getHourMarks(): Mark[] {
-    const result: Mark[] = [];
-    for (let i = minHourValue; i <= maxHourValue; i++) {
-        const mark: Mark = {
-            value: i,
-            label: i
-        }
-        result.push(mark);
-    }
-    return result;
-}

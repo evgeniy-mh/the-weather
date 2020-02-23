@@ -2,6 +2,7 @@ import { AppState, SensorsData, Co2ValueLogEntry, ESPSettings } from './Models';
 import { SettingsDrawerAction } from './Actions/SettingsDrawerActions';
 import { Co2LogAction } from './Actions/Co2LogActions';
 import { SensorValuesAction } from './Actions/SensorValuesActions';
+import { EspSettingsAction } from './Actions/EspSettingsActions';
 
 function settingsDrawerReducer(
     state: boolean,
@@ -58,10 +59,17 @@ function sensorsDataReducer(
 
 function espSettingsReducer(
     state: ESPSettings,
-    action: any // TODO
+    action: EspSettingsAction
 ): ESPSettings {
-
-    return state;
+    switch (action.type) {
+        case 'FETCH_ESP_SETTINGS_START':
+            return { ...action.payload, dataFetchStatus: 'loading' }
+        case 'FETCH_ESP_SETTINGS_SUCCESS':
+            return { ...action.payload, dataFetchStatus: 'success' }
+        case 'FETCH_ESP_SETTINGS_FAIL':
+            return { ...action.payload, dataFetchStatus: 'fail' }
+        default: return state
+    }
 }
 
 function createEmptyAppState(): AppState {
@@ -74,8 +82,9 @@ function createEmptyAppState(): AppState {
             dataFetchStatus: 'loading'
         },
         espSettings: {
-            logEntriesCreationIntervalMs: 0,
-            maxStoredLogEntries: 0
+            dataFetchStatus: 'loading',
+            logEntriesCount: 0,
+            logMsInterval: 0,
         }
     }
 }

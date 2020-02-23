@@ -1,13 +1,13 @@
+import { fetchEspSettingsStart, fetchEspSettingsFail, fetchEspSettingsSuccess } from "../Actions/EspSettingsActions";
+import { ESPSettings, LogDuration } from "../Models";
 
+const settingsUrl = 'http://192.168.0.100/settings'
 
 export function fetchEspSettings(): any {
     return async function (dispatch: any) {
+        dispatch(fetchEspSettingsStart());
 
-        console.log('starting fetchEspSettings');
-
-        const url = 'http://192.168.0.100/settings'
-
-        const res = await fetch(url,
+        const result = await fetch(settingsUrl,
             {
                 method: 'GET',
                 headers: {
@@ -19,6 +19,30 @@ export function fetchEspSettings(): any {
             }
         );
 
-        console.log(res);
+        if (result.ok) {
+            const espSettings: ESPSettings = await result.json();
+            const logDuration = calculateLogDuration(
+                espSettings.logEntriesCount,
+                espSettings.logMsInterval
+            );
+            espSettings.logDuration = logDuration;
+            dispatch(fetchEspSettingsSuccess(espSettings))
+        } else {
+            dispatch(fetchEspSettingsFail())
+        }
+    }
+}
+
+function calculateLogDuration(
+    logEntriesCount: number,
+    logMsInterval: number): LogDuration {
+
+    const totalMs = logEntriesCount * logMsInterval;
+    const totalSec = Math.trunc(totalMs / 1000);
+    const totalMinutes = Math.trunc(totalSec / 60);
+    const totalHours = Math.trunc(totalMinutes / 60);
+    return {
+        minutes: Math.trunc(totalMinutes % 60),
+        hours: Math.trunc(totalHours % 24),
     }
 }
