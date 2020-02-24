@@ -13,10 +13,11 @@ import { fetchEspSettings } from '../../Services/EspSettingsService';
 
 export function SettingsDrawer() {
     const isOpened: boolean = useSelector((state: AppState) => state.settingsDrawerOpened);
-    // const espSettings: ESPSettings = useSelector((state: AppState) => state.espSettings);
+    const logDurationHourInitial: number = useSelector((state: AppState) =>
+        state.espSettings.logDuration ? state.espSettings.logDuration.hours : 0
+    )
 
     const dispatch = useDispatch();
-
     React.useEffect(() => {
         dispatch(fetchEspSettings())
     }, [])
@@ -26,7 +27,11 @@ export function SettingsDrawer() {
         [dispatch]
     );
 
-    const [logHourDuration, setLogHourDuration] = React.useState<number>(5);
+    const [newLogDurationHour, setNewLogDurationHour] = React.useState<number>(0);
+
+    React.useEffect(() => {
+        setNewLogDurationHour(logDurationHourInitial);
+    }, [logDurationHourInitial]);
 
     const useStyles = makeStyles({
         drawerPaper: {
@@ -49,8 +54,8 @@ export function SettingsDrawer() {
                 <List>
                     <ListItem>
                         <LogDurationSelector
-                            timeDurationHourValue={logHourDuration}
-                            onChange={value => { setLogHourDuration(value) }}
+                            timeDurationHourValue={newLogDurationHour}
+                            onChange={value => { setNewLogDurationHour(value) }}
                         />
                     </ListItem>
                 </List>
