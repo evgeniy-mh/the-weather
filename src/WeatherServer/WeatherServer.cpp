@@ -142,6 +142,9 @@ void WeatherServer::defineRESTRoutes(){
               }else{
                 request->send(500, "application/text", "unable to write settings to file");
               }
+
+              //TODO: make reconfiguration without restart
+              ESP.restart();
             }else{
               request->send(500, "application/text", "invalid settings");
             }
