@@ -137,14 +137,12 @@ void WeatherServer::defineRESTRoutes(){
 
             if(appSettingsService->areSettingsValid(newSettings)){
               appSettingsService->setSettings(newSettings);
+              appContext->getSensorValuesLogger()->setNumberOfEntries(newSettings.logEntriesCount);
               if(appSettingsService->writeSettingsToFile()){
                 request->send(200);
               }else{
                 request->send(500, "application/text", "unable to write settings to file");
               }
-
-              //TODO: make reconfiguration without restart
-              ESP.restart();
             }else{
               request->send(500, "application/text", "invalid settings");
             }

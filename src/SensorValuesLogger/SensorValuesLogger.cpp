@@ -23,13 +23,24 @@ SensorValuesLogger::SensorValuesLogger(int numberOfLogEntries){
     for(int i=0;i<nOfEntries;i++){
         sensorsLog[i].ms=0;
         sensorsLog[i].co2=0;
-        // sensorsLog[i].humid=0;
-        // sensorsLog[i].temp=0;
     }
 }
 
 SensorValuesLogger::~SensorValuesLogger(){
     delete [] sensorsLog;
+}
+
+void SensorValuesLogger::setNumberOfEntries(int newNumber){
+    Entry* newSensorsLog=new Entry[newNumber];
+    for(int i=0;i<newNumber;i++){
+        if(i<nOfEntries){
+            newSensorsLog[i]=sensorsLog[i];
+        }
+    }
+
+    delete [] sensorsLog;
+    sensorsLog=newSensorsLog;
+    nOfEntries=newNumber;
 }
 
 void SensorValuesLogger::logSensorValues(){

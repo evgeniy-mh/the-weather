@@ -106,6 +106,6 @@ EspSettings PersistantSettingsService::getSettings(){
 bool PersistantSettingsService::areSettingsValid(EspSettings newSettings){
        return 
             newSettings.logEntriesCount>1 
-            && newSettings.logEntriesCount<500
-            && newSettings.logMsInterval>5000;
+            && newSettings.logEntriesCount<=500
+            && newSettings.logMsInterval>=5000;
 }

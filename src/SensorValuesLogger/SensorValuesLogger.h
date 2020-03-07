@@ -25,6 +25,7 @@ class SensorValuesLogger{
         void logSensorValues();
         String* getNewestEntryJSON();
         SensorValues getNewestSensorValues();
+        void setNumberOfEntries(int newNumber);
 
     private:
         void addLogEntry(Entry newEntry);
