@@ -1,3 +1,16 @@
 .settings-container{
-    
+    padding: 0;
+}
+
+.settings-container .bottom-buttons{
+    padding: 10px;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.settings-container .bottom-buttons button{
+    flex-grow: 1;
+    margin: 5px;
 }

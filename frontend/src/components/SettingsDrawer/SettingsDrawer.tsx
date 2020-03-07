@@ -10,6 +10,8 @@ import "./SettingsDrawer.css"
 import { LogDurationSelector } from '../LogDurationSelector/LogDurationSelector';
 import { closeSettingsDrawer } from '../../Actions/SettingsDrawerActions';
 import { fetchEspSettings } from '../../Services/EspSettingsService';
+import Button from '@material-ui/core/Button/Button';
+import SaveIcon from '@material-ui/icons/Save';
 
 export function SettingsDrawer() {
     const isOpened: boolean = useSelector((state: AppState) => state.settingsDrawerOpened);
@@ -59,7 +61,27 @@ export function SettingsDrawer() {
                         />
                     </ListItem>
                 </List>
+
+                {bottomButtons}
             </div>
         </Drawer>
     );
 }
+
+const bottomButtons = (
+    <div className='bottom-buttons'>
+        <Button
+            variant="contained"
+            color="default"
+        >
+            Cancel
+        </Button>
+        <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SaveIcon />}
+        >
+            Save
+      </Button>
+    </div>
+);
