@@ -40,16 +40,25 @@ export type LogDuration = {
 }
 
 export type ESPSettings = {
-    dataFetchStatus: DataFetchStatus,
     logEntriesCount: number,
     logMsInterval: number, // time interval in ms
+}
+
+export type ESPSettingsState = ESPSettings & {
+    dataFetchStatus: DataFetchStatus,
     logDuration?: LogDuration
+}
+
+export const EMPTY_ESP_SETTINGS: ESPSettingsState = {
+    dataFetchStatus: 'loading',
+    logEntriesCount: 0,
+    logMsInterval: 0
 }
 
 export type AppState = Readonly<{
     settingsDrawerOpened: boolean,
     sensorsData: SensorsData,
-    espSettings: ESPSettings,
+    espSettings: ESPSettingsState,
 }>
 
 export function parseLogCSV(log: string): EspRawLog {

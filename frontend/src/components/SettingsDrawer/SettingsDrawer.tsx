@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import { AppState, ESPSettings } from '../../Models';
+import { AppState } from '../../Models';
 import Drawer from '@material-ui/core/Drawer/Drawer';
 import List from '@material-ui/core/List/List';
 import ListItem from '@material-ui/core/ListItem/ListItem';
@@ -9,7 +9,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import "./SettingsDrawer.css"
 import { LogDurationSelector } from '../LogDurationSelector/LogDurationSelector';
 import { closeSettingsDrawer } from '../../Actions/SettingsDrawerActions';
-import { fetchEspSettings } from '../../Services/EspSettingsService';
+import { fetchEspSettings, writeEspSettings } from '../../Services/EspSettingsService';
 import Button from '@material-ui/core/Button/Button';
 import SaveIcon from '@material-ui/icons/Save';
 
@@ -26,6 +26,14 @@ export function SettingsDrawer() {
 
     const closeSettings = React.useCallback(
         () => dispatch(closeSettingsDrawer()),
+        [dispatch]
+    );
+
+    const writeSettingsToESP = React.useCallback(
+        () => dispatch(writeEspSettings({
+            logEntriesCount: 100,
+            logMsInterval: 10000
+        })),
         [dispatch]
     );
 
@@ -62,26 +70,29 @@ export function SettingsDrawer() {
                     </ListItem>
                 </List>
 
-                {bottomButtons}
+                {bottomButtons()}
             </div>
         </Drawer>
     );
-}
 
-const bottomButtons = (
-    <div className='bottom-buttons'>
-        <Button
-            variant="contained"
-            color="default"
-        >
-            Cancel
-        </Button>
-        <Button
-            variant="contained"
-            color="primary"
-            startIcon={<SaveIcon />}
-        >
-            Save
-      </Button>
-    </div>
-);
+    function bottomButtons(): React.ReactNode {
+        return (
+            <div className='bottom-buttons'>
+                <Button
+                    variant="contained"
+                    color="default"
+                >
+                    Cancel
+            </Button>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    startIcon={<SaveIcon />}
+                    onClick={writeSettingsToESP}
+                >
+                    Save
+          </Button>
+            </div>
+        );
+    };
+}

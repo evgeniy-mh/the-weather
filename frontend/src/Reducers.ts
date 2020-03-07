@@ -1,4 +1,4 @@
-import { AppState, SensorsData, Co2ValueLogEntry, ESPSettings } from './Models';
+import { AppState, SensorsData, Co2ValueLogEntry, ESPSettingsState } from './Models';
 import { SettingsDrawerAction } from './Actions/SettingsDrawerActions';
 import { Co2LogAction } from './Actions/Co2LogActions';
 import { SensorValuesAction } from './Actions/SensorValuesActions';
@@ -38,7 +38,7 @@ function sensorsDataReducer(
 
             let newLog: Co2ValueLogEntry[] = [...state.co2ValuesLog, newEntry];
 
-            const maxElementsCount = 200;
+            const maxElementsCount = 500;
             if (newLog.length > maxElementsCount) {
                 newLog = newLog.slice(newLog.length - maxElementsCount);
             }
@@ -58,9 +58,9 @@ function sensorsDataReducer(
 }
 
 function espSettingsReducer(
-    state: ESPSettings,
+    state: ESPSettingsState,
     action: EspSettingsAction
-): ESPSettings {
+): ESPSettingsState {
     switch (action.type) {
         case 'FETCH_ESP_SETTINGS_START':
             return { ...action.payload, dataFetchStatus: 'loading' }
